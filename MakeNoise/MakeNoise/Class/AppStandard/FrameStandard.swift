@@ -14,4 +14,8 @@ class FrameStandard: NSObject {
         case normal = 1.5
     }
     
+    /// 拍摄按钮宽高
+    static let recordVideoButtonSideLength: CGFloat = 60
+    
+    
 }

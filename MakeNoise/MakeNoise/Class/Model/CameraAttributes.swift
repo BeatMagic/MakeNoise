@@ -25,10 +25,39 @@ class CameraAttributes: NSObject {
     public enum FlashMode: Int {
         case on, off, auto
         
+        /// 闪光灯模式转换
+        func changeToAvFlashModel() -> AVCaptureDevice.FlashMode {
+            switch self {
+            case .auto:
+                return .auto
+                
+            case .on:
+                return .on
+                
+            case .off:
+                return .off
+            }
+        }
+        
     }
     
     /// 媒体质量
     enum MediaQuality: Int {
         case high, medium, low
+        
+        /// 媒体质量转换
+        func changeToAvPreset() -> AVCaptureSession.Preset {
+            switch self {
+            case .high:
+                return AVCaptureSession.Preset.high
+                
+            case .medium:
+                return AVCaptureSession.Preset.medium
+                
+            case .low:
+                return AVCaptureSession.Preset.low
+                
+            }
+        }
     }
 }
