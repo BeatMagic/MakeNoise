@@ -1,0 +1,43 @@
+PODS:
+  - AudioKit (4.4.0):
+    - AudioKit/Core (= 4.4.0)
+    - AudioKit/UI (= 4.4.0)
+  - AudioKit/Core (4.4.0)
+  - AudioKit/UI (4.4.0)
+  - ChameleonFramework/Default (2.1.0)
+  - ChameleonFramework/Swift (2.1.0):
+    - ChameleonFramework/Default
+  - HGRippleRadarView (0.1.2)
+  - SnapKit (4.0.1)
+
+DEPENDENCIES:
+  - AudioKit (~> 4.0)
+  - AudioKit/UI
+  - ChameleonFramework/Swift (from `https://github.com/ViccAlexander/Chameleon.git`)
+  - HGRippleRadarView
+  - SnapKit (~> 4.0.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AudioKit
+    - HGRippleRadarView
+    - SnapKit
+
+EXTERNAL SOURCES:
+  ChameleonFramework:
+    :git: https://github.com/ViccAlexander/Chameleon.git
+
+CHECKOUT OPTIONS:
+  ChameleonFramework:
+    :commit: 6dd284bde21ea2e7f9fd89bc36f40df16e16369d
+    :git: https://github.com/ViccAlexander/Chameleon.git
+
+SPEC CHECKSUMS:
+  AudioKit: 79c2b23cd00beb656938aa0b81b614391f17eaa3
+  ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
+  HGRippleRadarView: 5379e27634c09222ebc836671c7425ad7b257cc4
+  SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
+
+PODFILE CHECKSUM: 3b2350d009bc0d01a40862b520376e7de064081d
+
+COCOAPODS: 1.6.0.beta.1
