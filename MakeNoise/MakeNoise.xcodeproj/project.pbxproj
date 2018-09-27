@@ -16,6 +16,9 @@
 		7CD229B4215C740A0029F4CC /* ExtensionForSomeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229B0215C740A0029F4CC /* ExtensionForSomeClass.swift */; };
 		7CD229B5215C740A0029F4CC /* ToolClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229B1215C740A0029F4CC /* ToolClass.swift */; };
 		7CD229B6215C740A0029F4CC /* BasicKnowledge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229B2215C740A0029F4CC /* BasicKnowledge.swift */; };
+		7CD229BA215C76F00029F4CC /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229B9215C76F00029F4CC /* CameraView.swift */; };
+		7CD229BC215C777A0029F4CC /* CameraAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229BB215C777A0029F4CC /* CameraAttributes.swift */; };
+		7CD229C0215C79A40029F4CC /* DealWithCameraAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229BF215C79A40029F4CC /* DealWithCameraAttributes.swift */; };
 		8B8C977CAE243D5B39B6D414 /* Pods_MakeNoise.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8558B08243A85E41D4A1F016 /* Pods_MakeNoise.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +36,9 @@
 		7CD229B0215C740A0029F4CC /* ExtensionForSomeClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionForSomeClass.swift; sourceTree = "<group>"; };
 		7CD229B1215C740A0029F4CC /* ToolClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolClass.swift; sourceTree = "<group>"; };
 		7CD229B2215C740A0029F4CC /* BasicKnowledge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicKnowledge.swift; sourceTree = "<group>"; };
+		7CD229B9215C76F00029F4CC /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		7CD229BB215C777A0029F4CC /* CameraAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAttributes.swift; sourceTree = "<group>"; };
+		7CD229BF215C79A40029F4CC /* DealWithCameraAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DealWithCameraAttributes.swift; sourceTree = "<group>"; };
 		8558B08243A85E41D4A1F016 /* Pods_MakeNoise.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MakeNoise.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -118,6 +124,7 @@
 		7CD229A9215C740A0029F4CC /* ModelManager */ = {
 			isa = PBXGroup;
 			children = (
+				7CD229BF215C79A40029F4CC /* DealWithCameraAttributes.swift */,
 			);
 			path = ModelManager;
 			sourceTree = "<group>";
@@ -125,6 +132,7 @@
 		7CD229AA215C740A0029F4CC /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				7CD229BB215C777A0029F4CC /* CameraAttributes.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -148,6 +156,7 @@
 		7CD229AD215C740A0029F4CC /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7CD229B9215C76F00029F4CC /* CameraView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -201,7 +210,6 @@
 				7A79A83E99E693A2637FA976 /* Pods-MakeNoise.debug.xcconfig */,
 				4D809D14179CACDF505466F2 /* Pods-MakeNoise.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -332,7 +340,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				7CD229B4215C740A0029F4CC /* ExtensionForSomeClass.swift in Sources */,
+				7CD229BC215C777A0029F4CC /* CameraAttributes.swift in Sources */,
+				7CD229BA215C76F00029F4CC /* CameraView.swift in Sources */,
 				7CD229B3215C740A0029F4CC /* FrameStandard.swift in Sources */,
+				7CD229C0215C79A40029F4CC /* DealWithCameraAttributes.swift in Sources */,
 				7CD22995215C731C0029F4CC /* ViewController.swift in Sources */,
 				7CD22993215C731C0029F4CC /* AppDelegate.swift in Sources */,
 				7CD229B5215C740A0029F4CC /* ToolClass.swift in Sources */,
