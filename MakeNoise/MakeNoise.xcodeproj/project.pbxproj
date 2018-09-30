@@ -7,6 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7CC0C2392160C038005951CA /* PlayVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2382160C038005951CA /* PlayVideoViewController.swift */; };
+		7CC0C2462160C4C0005951CA /* shake_E2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23B2160C4C0005951CA /* shake_E2.wav */; };
+		7CC0C2472160C4C0005951CA /* pluck5_B1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23C2160C4C0005951CA /* pluck5_B1.wav */; };
+		7CC0C2482160C4C0005951CA /* pluck1_E1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23D2160C4C0005951CA /* pluck1_E1.wav */; };
+		7CC0C2492160C4C0005951CA /* snare_F2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23E2160C4C0005951CA /* snare_F2.wav */; };
+		7CC0C24A2160C4C0005951CA /* pluck2_F1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23F2160C4C0005951CA /* pluck2_F1.wav */; };
+		7CC0C24B2160C4C0005951CA /* clap_D2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C2402160C4C0005951CA /* clap_D2.wav */; };
+		7CC0C24C2160C4C0005951CA /* pluck4_A1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C2412160C4C0005951CA /* pluck4_A1.wav */; };
+		7CC0C24D2160C4C0005951CA /* HH_C2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C2422160C4C0005951CA /* HH_C2.wav */; };
+		7CC0C24E2160C4C0005951CA /* pad_D1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C2432160C4C0005951CA /* pad_D1.wav */; };
+		7CC0C24F2160C4C0005951CA /* pluck3_G1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C2442160C4C0005951CA /* pluck3_G1.wav */; };
+		7CC0C2502160C4C0005951CA /* Kick+HH_C1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C2452160C4C0005951CA /* Kick+HH_C1.wav */; };
+		7CC0C2552160C4EC005951CA /* MusicAttributesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2512160C4EC005951CA /* MusicAttributesModel.swift */; };
+		7CC0C2562160C4EC005951CA /* KeyTouchEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2522160C4EC005951CA /* KeyTouchEvent.swift */; };
+		7CC0C2572160C4EC005951CA /* Timbres.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2532160C4EC005951CA /* Timbres.swift */; };
+		7CC0C2582160C4EC005951CA /* MusicKeyAttributesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2542160C4EC005951CA /* MusicKeyAttributesModel.swift */; };
+		7CC0C25A2160C4F9005951CA /* MusicMessageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2592160C4F9005951CA /* MusicMessageProcessing.swift */; };
+		7CC0C2602160C503005951CA /* SoundEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C25B2160C503005951CA /* SoundEngine.swift */; };
+		7CC0C2612160C503005951CA /* BeatTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C25C2160C503005951CA /* BeatTimer.swift */; };
+		7CC0C2622160C503005951CA /* TimbreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C25D2160C503005951CA /* TimbreManager.swift */; };
+		7CC0C2632160C503005951CA /* EventQueueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C25E2160C503005951CA /* EventQueueManager.swift */; };
+		7CC0C2642160C503005951CA /* EventQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C25F2160C503005951CA /* EventQueue.swift */; };
+		7CC0C2692160C50D005951CA /* BaseMovableMusicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2652160C50D005951CA /* BaseMovableMusicKey.swift */; };
+		7CC0C26A2160C50D005951CA /* BaseMusicKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2662160C50D005951CA /* BaseMusicKey.swift */; };
+		7CC0C26B2160C50D005951CA /* OperateKeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2672160C50D005951CA /* OperateKeysView.swift */; };
+		7CC0C26C2160C50D005951CA /* TouchEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2682160C50D005951CA /* TouchEventView.swift */; };
 		7CD22993215C731C0029F4CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD22992215C731C0029F4CC /* AppDelegate.swift */; };
 		7CD22995215C731C0029F4CC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD22994215C731C0029F4CC /* ViewController.swift */; };
 		7CD22998215C731C0029F4CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CD22996215C731C0029F4CC /* Main.storyboard */; };
@@ -25,6 +51,32 @@
 /* Begin PBXFileReference section */
 		4D809D14179CACDF505466F2 /* Pods-MakeNoise.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.release.xcconfig"; path = "Target Support Files/Pods-MakeNoise/Pods-MakeNoise.release.xcconfig"; sourceTree = "<group>"; };
 		7A79A83E99E693A2637FA976 /* Pods-MakeNoise.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.debug.xcconfig"; path = "Target Support Files/Pods-MakeNoise/Pods-MakeNoise.debug.xcconfig"; sourceTree = "<group>"; };
+		7CC0C2382160C038005951CA /* PlayVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayVideoViewController.swift; sourceTree = "<group>"; };
+		7CC0C23B2160C4C0005951CA /* shake_E2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = shake_E2.wav; sourceTree = "<group>"; };
+		7CC0C23C2160C4C0005951CA /* pluck5_B1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pluck5_B1.wav; sourceTree = "<group>"; };
+		7CC0C23D2160C4C0005951CA /* pluck1_E1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pluck1_E1.wav; sourceTree = "<group>"; };
+		7CC0C23E2160C4C0005951CA /* snare_F2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = snare_F2.wav; sourceTree = "<group>"; };
+		7CC0C23F2160C4C0005951CA /* pluck2_F1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pluck2_F1.wav; sourceTree = "<group>"; };
+		7CC0C2402160C4C0005951CA /* clap_D2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = clap_D2.wav; sourceTree = "<group>"; };
+		7CC0C2412160C4C0005951CA /* pluck4_A1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pluck4_A1.wav; sourceTree = "<group>"; };
+		7CC0C2422160C4C0005951CA /* HH_C2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = HH_C2.wav; sourceTree = "<group>"; };
+		7CC0C2432160C4C0005951CA /* pad_D1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pad_D1.wav; sourceTree = "<group>"; };
+		7CC0C2442160C4C0005951CA /* pluck3_G1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pluck3_G1.wav; sourceTree = "<group>"; };
+		7CC0C2452160C4C0005951CA /* Kick+HH_C1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "Kick+HH_C1.wav"; sourceTree = "<group>"; };
+		7CC0C2512160C4EC005951CA /* MusicAttributesModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicAttributesModel.swift; sourceTree = "<group>"; };
+		7CC0C2522160C4EC005951CA /* KeyTouchEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyTouchEvent.swift; sourceTree = "<group>"; };
+		7CC0C2532160C4EC005951CA /* Timbres.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timbres.swift; sourceTree = "<group>"; };
+		7CC0C2542160C4EC005951CA /* MusicKeyAttributesModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicKeyAttributesModel.swift; sourceTree = "<group>"; };
+		7CC0C2592160C4F9005951CA /* MusicMessageProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicMessageProcessing.swift; sourceTree = "<group>"; };
+		7CC0C25B2160C503005951CA /* SoundEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEngine.swift; sourceTree = "<group>"; };
+		7CC0C25C2160C503005951CA /* BeatTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeatTimer.swift; sourceTree = "<group>"; };
+		7CC0C25D2160C503005951CA /* TimbreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimbreManager.swift; sourceTree = "<group>"; };
+		7CC0C25E2160C503005951CA /* EventQueueManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventQueueManager.swift; sourceTree = "<group>"; };
+		7CC0C25F2160C503005951CA /* EventQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventQueue.swift; sourceTree = "<group>"; };
+		7CC0C2652160C50D005951CA /* BaseMovableMusicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseMovableMusicKey.swift; sourceTree = "<group>"; };
+		7CC0C2662160C50D005951CA /* BaseMusicKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseMusicKey.swift; sourceTree = "<group>"; };
+		7CC0C2672160C50D005951CA /* OperateKeysView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperateKeysView.swift; sourceTree = "<group>"; };
+		7CC0C2682160C50D005951CA /* TouchEventView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchEventView.swift; sourceTree = "<group>"; };
 		7CD2298F215C731B0029F4CC /* MakeNoise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MakeNoise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CD22992215C731C0029F4CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7CD22994215C731C0029F4CC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -54,6 +106,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7CC0C2372160C008005951CA /* PlayVideoVC */ = {
+			isa = PBXGroup;
+			children = (
+				7CC0C2382160C038005951CA /* PlayVideoViewController.swift */,
+			);
+			path = PlayVideoVC;
+			sourceTree = "<group>";
+		};
+		7CC0C23A2160C4C0005951CA /* ToneFiles */ = {
+			isa = PBXGroup;
+			children = (
+				7CC0C23B2160C4C0005951CA /* shake_E2.wav */,
+				7CC0C23C2160C4C0005951CA /* pluck5_B1.wav */,
+				7CC0C23D2160C4C0005951CA /* pluck1_E1.wav */,
+				7CC0C23E2160C4C0005951CA /* snare_F2.wav */,
+				7CC0C23F2160C4C0005951CA /* pluck2_F1.wav */,
+				7CC0C2402160C4C0005951CA /* clap_D2.wav */,
+				7CC0C2412160C4C0005951CA /* pluck4_A1.wav */,
+				7CC0C2422160C4C0005951CA /* HH_C2.wav */,
+				7CC0C2432160C4C0005951CA /* pad_D1.wav */,
+				7CC0C2442160C4C0005951CA /* pluck3_G1.wav */,
+				7CC0C2452160C4C0005951CA /* Kick+HH_C1.wav */,
+			);
+			path = ToneFiles;
+			sourceTree = "<group>";
+		};
 		7CD22986215C731B0029F4CC = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				7CD22999215C731D0029F4CC /* Assets.xcassets */,
+				7CC0C23A2160C4C0005951CA /* ToneFiles */,
 			);
 			name = Resource;
 			sourceTree = "<group>";
@@ -125,6 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				7CD229BF215C79A40029F4CC /* DealWithCameraAttributes.swift */,
+				7CC0C2592160C4F9005951CA /* MusicMessageProcessing.swift */,
 			);
 			path = ModelManager;
 			sourceTree = "<group>";
@@ -133,6 +213,10 @@
 			isa = PBXGroup;
 			children = (
 				7CD229BB215C777A0029F4CC /* CameraAttributes.swift */,
+				7CC0C2522160C4EC005951CA /* KeyTouchEvent.swift */,
+				7CC0C2512160C4EC005951CA /* MusicAttributesModel.swift */,
+				7CC0C2542160C4EC005951CA /* MusicKeyAttributesModel.swift */,
+				7CC0C2532160C4EC005951CA /* Timbres.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -149,6 +233,11 @@
 		7CD229AC215C740A0029F4CC /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				7CC0C25C2160C503005951CA /* BeatTimer.swift */,
+				7CC0C25F2160C503005951CA /* EventQueue.swift */,
+				7CC0C25E2160C503005951CA /* EventQueueManager.swift */,
+				7CC0C25B2160C503005951CA /* SoundEngine.swift */,
+				7CC0C25D2160C503005951CA /* TimbreManager.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -156,6 +245,10 @@
 		7CD229AD215C740A0029F4CC /* View */ = {
 			isa = PBXGroup;
 			children = (
+				7CC0C2662160C50D005951CA /* BaseMusicKey.swift */,
+				7CC0C2652160C50D005951CA /* BaseMovableMusicKey.swift */,
+				7CC0C2672160C50D005951CA /* OperateKeysView.swift */,
+				7CC0C2682160C50D005951CA /* TouchEventView.swift */,
 				7CD229B9215C76F00029F4CC /* CameraView.swift */,
 			);
 			path = View;
@@ -184,6 +277,7 @@
 			isa = PBXGroup;
 			children = (
 				7CD229B8215C745A0029F4CC /* RecordVideoVC */,
+				7CC0C2372160C008005951CA /* PlayVideoVC */,
 			);
 			path = Transaction;
 			sourceTree = "<group>";
@@ -273,9 +367,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CC0C24A2160C4C0005951CA /* pluck2_F1.wav in Resources */,
 				7CD2299D215C731D0029F4CC /* LaunchScreen.storyboard in Resources */,
+				7CC0C2472160C4C0005951CA /* pluck5_B1.wav in Resources */,
+				7CC0C24F2160C4C0005951CA /* pluck3_G1.wav in Resources */,
 				7CD2299A215C731D0029F4CC /* Assets.xcassets in Resources */,
+				7CC0C24B2160C4C0005951CA /* clap_D2.wav in Resources */,
+				7CC0C2502160C4C0005951CA /* Kick+HH_C1.wav in Resources */,
+				7CC0C2462160C4C0005951CA /* shake_E2.wav in Resources */,
+				7CC0C24D2160C4C0005951CA /* HH_C2.wav in Resources */,
+				7CC0C2482160C4C0005951CA /* pluck1_E1.wav in Resources */,
+				7CC0C24C2160C4C0005951CA /* pluck4_A1.wav in Resources */,
+				7CC0C2492160C4C0005951CA /* snare_F2.wav in Resources */,
 				7CD22998215C731C0029F4CC /* Main.storyboard in Resources */,
+				7CC0C24E2160C4C0005951CA /* pad_D1.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,15 +444,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CC0C2692160C50D005951CA /* BaseMovableMusicKey.swift in Sources */,
 				7CD229B4215C740A0029F4CC /* ExtensionForSomeClass.swift in Sources */,
+				7CC0C2612160C503005951CA /* BeatTimer.swift in Sources */,
 				7CD229BC215C777A0029F4CC /* CameraAttributes.swift in Sources */,
 				7CD229BA215C76F00029F4CC /* CameraView.swift in Sources */,
+				7CC0C2622160C503005951CA /* TimbreManager.swift in Sources */,
+				7CC0C26A2160C50D005951CA /* BaseMusicKey.swift in Sources */,
 				7CD229B3215C740A0029F4CC /* FrameStandard.swift in Sources */,
+				7CC0C2642160C503005951CA /* EventQueue.swift in Sources */,
+				7CC0C2632160C503005951CA /* EventQueueManager.swift in Sources */,
+				7CC0C2562160C4EC005951CA /* KeyTouchEvent.swift in Sources */,
+				7CC0C25A2160C4F9005951CA /* MusicMessageProcessing.swift in Sources */,
 				7CD229C0215C79A40029F4CC /* DealWithCameraAttributes.swift in Sources */,
+				7CC0C2582160C4EC005951CA /* MusicKeyAttributesModel.swift in Sources */,
 				7CD22995215C731C0029F4CC /* ViewController.swift in Sources */,
+				7CC0C26C2160C50D005951CA /* TouchEventView.swift in Sources */,
+				7CC0C2572160C4EC005951CA /* Timbres.swift in Sources */,
 				7CD22993215C731C0029F4CC /* AppDelegate.swift in Sources */,
+				7CC0C2602160C503005951CA /* SoundEngine.swift in Sources */,
 				7CD229B5215C740A0029F4CC /* ToolClass.swift in Sources */,
+				7CC0C2392160C038005951CA /* PlayVideoViewController.swift in Sources */,
+				7CC0C26B2160C50D005951CA /* OperateKeysView.swift in Sources */,
 				7CD229B6215C740A0029F4CC /* BasicKnowledge.swift in Sources */,
+				7CC0C2552160C4EC005951CA /* MusicAttributesModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

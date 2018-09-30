@@ -9,6 +9,76 @@
 import UIKit
 
 public class ToolClass: NSObject {
+    
+    /// 求两点间距离
+    static func getDistance(point1: CGPoint, point2: CGPoint) -> CGFloat {
+        return sqrt(pow((point1.x - point2.x), 2) + pow((point1.y - point2.y), 2))
+        
+    }
+    
+    /// 给定两个点 获得该直线方程
+    static func getEquationFrom(point1: CGPoint, point2: CGPoint) -> [CGFloat] {
+        
+        // y = a * x + b
+        let a = (point1.y - point2.y) / (point1.x - point2.x)
+        
+        let b = point1.y - a * point1.x
+        
+        return [a, b]
+    }
+    
+    /// 给定两个点和一个View 获得两点所连线段是否过View
+    static func judgeTwoPointsSegmentIsPassView(point1: CGPoint, point2: CGPoint, view: UIView) -> Bool {
+        // 系数数组 [a, b]
+        let coefficientArray = self.getEquationFrom(point1: point1, point2: point2)
+        let a = coefficientArray[0]
+        let b = coefficientArray[1]
+        
+        // view的上宽和下宽的Y
+        let y1 = view.frame.origin.y
+        let y2 = y1 + view.frame.height
+        
+        // 获得解
+        let x1 = (y1 - b) / a
+        let x2 = (y2 - b) / a
+        
+        var tmpPoint1: CGPoint
+        var tmpPoint2: CGPoint
+        
+        
+        if point1.x > point2.x {
+            tmpPoint1 = point2
+            tmpPoint2 = point1
+            
+        }else {
+            tmpPoint1 = point1
+            tmpPoint2 = point2
+            
+        }
+        
+        // View的x区间
+        let minX = view.frame.origin.x
+        let maxX = minX + view.frame.width
+        
+        if (x1 >= minX && x1 <= maxX && x1 >= tmpPoint1.x && x1 <= tmpPoint2.x)
+            ||
+            (x2 >= minX && x2 <= maxX && x2 >= tmpPoint1.x && x2 <= tmpPoint2.x ) {
+            
+            return true
+            
+        }else if view.frame.contains(point1) || view.frame.contains(point2) {
+            return true
+            
+        }else {
+            return false
+            
+        }
+        
+        
+        
+    }
+    
+    
     /// 3.2 字符串的剪切与拼接
     static func cutStringWithPlaces(_ dealString: String, startPlace: Int, endPlace: Int) -> String {
         let startIndex = dealString.index(dealString.startIndex, offsetBy: startPlace)
@@ -231,87 +301,69 @@ public class ToolClass: NSObject {
     }
     
     /// 动画类
-    /*
-     static func baseAnimationWithKeyPath(_ path : String , fromValue : Any? , toValue : Any?, duration : CFTimeInterval, repeatCount : Float? , timingFunction : String?) -> CABasicAnimation{
-     
-     let animate = CABasicAnimation(keyPath: path)
-     //起始值
-     animate.fromValue = fromValue;
-     
-     //变成什么，或者说到哪个值
-     animate.toValue = toValue
-     
-     //所改变属性的起始改变量 比如旋转360°，如果该值设置成为0.5 那么动画就从180°开始
-     //        animate.byValue =
-     
-     //动画结束是否停留在动画结束的位置
-     animate.isRemovedOnCompletion = false
-     
-     //动画时长
-     animate.duration = duration
-     
-     //重复次数 Float.infinity 一直重复 OC：HUGE_VALF
-     animate.repeatCount = repeatCount ?? 0
-     
-     //设置动画在该时间内重复
-     //        animate.repeatDuration = 5
-     
-     //延时动画开始时间，使用CACurrentMediaTime() + 秒(s)
-     //        animate.beginTime = CACurrentMediaTime() + 2;
-     
-     //设置动画的速度变化
-     /*
-     kCAMediaTimingFunctionLinear: String        匀速
-     kCAMediaTimingFunctionEaseIn: String        先慢后快
-     kCAMediaTimingFunctionEaseOut: String       先快后慢
-     kCAMediaTimingFunctionEaseInEaseOut: String 两头慢，中间快
-     kCAMediaTimingFunctionDefault: String       默认效果和上面一个效果极为类似，不易区分
-     */
-     
-     animate.timingFunction = CAMediaTimingFunction(name: timingFunction ?? kCAMediaTimingFunctionEaseInEaseOut)
-     
-     
-     //动画在开始和结束的时候的动作
-     /*
-     kCAFillModeForwards    保持在最后一帧，如果想保持在最后一帧，那么isRemovedOnCompletion应该设置为false
-     kCAFillModeBackwards   将会立即执行第一帧，无论是否设置了beginTime属性
-     kCAFillModeBoth        该值是上面两者的组合状态
-     kCAFillModeRemoved     默认状态，会恢复原状
-     */
-     animate.fillMode = kCAFillModeBoth
-     
-     //动画结束时，是否执行逆向动画
-     //        animate.autoreverses = true
-     
-     return animate
-     
-     }
-     
-     
-     
-     static func creatThermometerAnimation(daysCount: Int, originalWidth: CGFloat) -> Array<CABasicAnimation> {
-     
-     let scale = Double.init(daysCount) / Double.init(90)
-     let translation = (1 - scale) / 2
-     
-     let scaleAnimation = baseAnimationWithKeyPath("transform.scale.x",
-     fromValue: 1,
-     toValue: scale,
-     duration: 1.5,
-     repeatCount: 0,
-     timingFunction: kCAMediaTimingFunctionEaseInEaseOut)
-     
-     let translationAnimation = baseAnimationWithKeyPath("transform.translation.x",
-     fromValue: nil,
-     toValue: translation * Double.init(originalWidth),
-     duration: 1.5,
-     repeatCount: 0,
-     timingFunction: kCAMediaTimingFunctionEaseInEaseOut)
-     
-     
-     return [scaleAnimation, translationAnimation]
-     }
-     */
+    static func baseAnimationWithKeyPath(_ path : String , fromValue : Any? , toValue : Any?, duration : CFTimeInterval, repeatCount : Float? , timingFunction : String?) -> CABasicAnimation{
+        
+        let animate = CABasicAnimation(keyPath: path)
+        //起始值
+        animate.fromValue = fromValue;
+        
+        //变成什么，或者说到哪个值
+        animate.toValue = toValue
+        
+        //所改变属性的起始改变量 比如旋转360°，如果该值设置成为0.5 那么动画就从180°开始
+        //        animate.byValue =
+        
+        //动画结束是否停留在动画结束的位置
+        animate.isRemovedOnCompletion = true
+        
+        //动画时长
+        animate.duration = duration
+        
+        //重复次数 Float.infinity 一直重复 OC：HUGE_VALF
+        animate.repeatCount = repeatCount ?? 0
+        
+        //设置动画在该时间内重复
+        //        animate.repeatDuration = 5
+        
+        //延时动画开始时间，使用CACurrentMediaTime() + 秒(s)
+        //        animate.beginTime = CACurrentMediaTime() + 2;
+        
+        //设置动画的速度变化
+        /*
+         kCAMediaTimingFunctionLinear: String        匀速
+         kCAMediaTimingFunctionEaseIn: String        先慢后快
+         kCAMediaTimingFunctionEaseOut: String       先快后慢
+         kCAMediaTimingFunctionEaseInEaseOut: String 两头慢，中间快
+         kCAMediaTimingFunctionDefault: String       默认效果和上面一个效果极为类似，不易区分
+         */
+        
+        if timingFunction == nil {
+            animate.timingFunction = CAMediaTimingFunction.init(name: CAMediaTimingFunctionName.easeOut)
+            
+        }else {
+            animate.timingFunction = CAMediaTimingFunction.init(name: CAMediaTimingFunctionName.init(rawValue: timingFunction!))
+            
+        }
+        
+        
+        
+        
+        
+        //动画在开始和结束的时候的动作
+        /*
+         kCAFillModeForwards    保持在最后一帧，如果想保持在最后一帧，那么isRemovedOnCompletion应该设置为false
+         kCAFillModeBackwards   将会立即执行第一帧，无论是否设置了beginTime属性
+         kCAFillModeBoth        该值是上面两者的组合状态
+         kCAFillModeRemoved     默认状态，会恢复原状
+         */
+        animate.fillMode = CAMediaTimingFillMode.both
+        
+        //动画结束时，是否执行逆向动画
+        //        animate.autoreverses = true
+        
+        return animate
+        
+    }
     
     
     //MARK: - 获取IP

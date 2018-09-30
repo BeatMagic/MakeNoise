@@ -46,6 +46,9 @@ class CameraView: UIView {
         }
     }
     
+    let musicKeyboard: OperateKeysView!
+
+    
 // MARK: - Private Property
     private var videoCompleteHandler: ((_ videoFileUrl: URL?, _ error: Error?) -> ())?
     
@@ -82,15 +85,15 @@ class CameraView: UIView {
     }()
     
 // MARK: - Initially
-    init(frame: CGRect, musicKeyboard: UIView?) {
+    init(frame: CGRect, musicKeyboard: OperateKeysView) {
+        self.musicKeyboard = musicKeyboard
+            
         super.init(frame: frame)
         
         self.setProperty()
         self.setUI()
         
-        if let tmpMusicKeyboard = musicKeyboard {
-            self.addSubview(tmpMusicKeyboard)
-        }
+        self.addSubview(self.musicKeyboard)
         
     }
     
