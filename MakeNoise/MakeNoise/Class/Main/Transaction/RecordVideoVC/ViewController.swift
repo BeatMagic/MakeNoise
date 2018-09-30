@@ -119,14 +119,14 @@ extension ViewController {
     /// 录制视频点击事件
     @objc func takePicture(sender: UIButton) -> Void {
         if sender.isSelected { // 正在录制, 点击停止
+            self.cameraView.endRecording()
+            
+            
             
             let playVideoViewController = UIViewController.initVControllerFromStoryboard("PlayVideoViewController") as! PlayVideoViewController
             playVideoViewController.modalTransitionStyle = .flipHorizontal
+            playVideoViewController.videoFileUrl = self.cameraView.tmpFileURL
             
-            self.cameraView.stopCapturingVideo(withHandler: { (videoUrl, error) in
-                playVideoViewController.videoFileUrl = videoUrl
-                
-            })
             
             sender.isSelected = false
             self.switchCameraButton.isHidden = false
@@ -137,7 +137,8 @@ extension ViewController {
         } else {// 点击开始录制
             sender.isSelected = true
             
-            let _ = self.cameraView.startCapturingVideo()
+            
+            self.cameraView.startRecording()
             
             self.switchCameraButton.isHidden = true
         }

@@ -20,6 +20,9 @@ class CameraView: UIView {
         didSet {
             self.session.beginConfiguration()
             self.changeMediaQuality(mediaQuality)
+            self.session.sessionPreset = AVCaptureSession.Preset.cif352x288
+            videoConnection = videoDataOutput.connection(with: .video)
+            audioConnection = audioDataOutput.connection(with: .audio)
             self.session.commitConfiguration()
             
         }
@@ -56,35 +59,58 @@ class CameraView: UIView {
     
     private var lastScale: CGFloat = 1.0
     
+// MARK: - 调度
     /// 资源调度
-    private lazy var session = AVCaptureSession()
+    private let session = AVCaptureSession()
     
-    /// 输入设备
+    /// session的线程
+    private let sessionQueue = DispatchQueue.init(label: "sessionQueue")
+    
+    /// 视频线程
+    private let videoDataOutputQueue = DispatchQueue.init(label: "videoDataOutputQueue")
+    
+    /// 音频线程
+    private let audioDataOutputQueue = DispatchQueue.init(label: "audioDataOutputQueue")
+    
+    /// 写入线程
+    private let writeFileQueue = DispatchQueue.init(label: "writeFileQueue")
+    
+    
+// MARK: - 视频
+    /// 输入
     private var videoDeviceInput: AVCaptureDeviceInput?
     
-    /// 输出影片文件
-    private lazy var movieFileOutput: AVCaptureMovieFileOutput? = AVCaptureMovieFileOutput()
+    /// 输出
+    private var videoDataOutput: AVCaptureVideoDataOutput = AVCaptureVideoDataOutput()
     
-    /// 实时画面Layer
+    private var videoConnection: AVCaptureConnection?
+
+    
+// MARK: - 音频
+    /// 输入
+    private var audioInput: AVCaptureDeviceInput?
+    
+    /// 输出
+    private var audioDataOutput: AVCaptureAudioDataOutput = AVCaptureAudioDataOutput()
+    
+    /// 链接
+    private var audioConnection: AVCaptureConnection?
+    
+// MARK: - 保存
+    var assetWriter: AVAssetWriter?
+    var videoWriterInput: AVAssetWriterInput?
+    var audioWriterInput: AVAssetWriterInput?
+    
+// MARK: - 文件目录
+    var tmpFileURL: URL?
+
+// MARK: - 实时画面Layer
     private lazy var previewLayer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer.init(session: self.session)
     
-    /// 专属操作调度session的线程
-    private lazy var sessionQueue: DispatchQueue = DispatchQueue.init(label: "sessionQueue")
     
-    /// 前置输出
-    private lazy var frontDeviceInput: AVCaptureDeviceInput? = self.deviceInput(forDevicePosition: .front)
     
-    /// 后置输出
-    private lazy var backDeviceInput: AVCaptureDeviceInput? = self.deviceInput(forDevicePosition: .back)
     
-    /// 缩放手势
-    private lazy var pinchGes: UIPinchGestureRecognizer = {
-        let tmpPinch = UIPinchGestureRecognizer.init(target: self, action: #selector(self.handlePinGesture(pinGes:)))
-        
-        return tmpPinch
-    }()
-    
-// MARK: - Initially
+// MARK: - Init
     init(frame: CGRect, musicKeyboard: OperateKeysView) {
         self.musicKeyboard = musicKeyboard
             
@@ -127,49 +153,54 @@ extension CameraView {
         
         let tapGes = UITapGestureRecognizer.init(target: self, action: #selector(self.handleTapGesture(tapGes:)))
         self.addGestureRecognizer(tapGes)
-        self.addGestureRecognizer(self.pinchGes)
     
         // 添加影片输出
-        self.session.addOutput(self.movieFileOutput!)
         self.backgroundColor = UIColor.clear
+        
+        // this will add current device
+        self.cameraPosition = .front
+        
+        self.videoDataOutput = {
+            let tmpOutput = AVCaptureVideoDataOutput.init()
+            
+            tmpOutput.alwaysDiscardsLateVideoFrames = true
+            tmpOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: NSNumber.init(value: kCVPixelFormatType_32BGRA)] as [String : Any]
+            tmpOutput.setSampleBufferDelegate(self, queue: self.videoDataOutputQueue)
+            
+            if self.session.canAddOutput(tmpOutput) {
+                self.session.addOutput(tmpOutput)
+            }
+            
+            return tmpOutput
+        }()
+        
+        self.audioDataOutput = {
+            let tmpOutput = AVCaptureAudioDataOutput.init()
+            tmpOutput.setSampleBufferDelegate(self, queue: self.audioDataOutputQueue)
+            if self.session.canAddOutput(tmpOutput) {
+                self.session.addOutput(tmpOutput)
+            }
+            
+            return tmpOutput
+        }()
+        
+        
+        
+        self.audioInput = {
+            let audioCaptureDevice = AVCaptureDevice.default(for: AVMediaType.audio)
+            let tmpAudioInput = try! AVCaptureDeviceInput.init(device: audioCaptureDevice!)
+            
+            if self.session.canAddInput(tmpAudioInput) {
+                self.session.addInput(tmpAudioInput)
+            }
+            
+            return tmpAudioInput
+        }()
+        
     }
     
     /// 设置UI
     func setUI() -> Void {
-        
-    }
-    
-    /// 缩放事件
-    @objc func handlePinGesture(pinGes: UIPinchGestureRecognizer) {
-        var beginScale: CGFloat = 1.0
-        
-        switch pinGes.state {
-        case .began:
-            beginScale = pinGes.scale
-            
-        case .changed:
-            if let device = videoDeviceInput?.device {
-                do {
-                    
-                    // only when preset = photo is the videoMaxZoomFactor != 1.0
-                    // and can zoom
-                    let maxScale = min(20.0, device.activeFormat.videoMaxZoomFactor)
-                    // do not change too fast
-                    let tempScale = min(lastScale + 0.3*(pinGes.scale - beginScale), maxScale)
-                    lastScale = max(1.0, tempScale)
-                    
-                    try device.lockForConfiguration()
-                    device.videoZoomFactor = lastScale
-                    device.unlockForConfiguration()
-                } catch {
-                    print("cannot lock ")
-                }
-            }
-            
-        default :
-            break
-        }
-        
         
     }
     
@@ -194,8 +225,215 @@ extension CameraView {
         }
     }
     
+
+    
 }
 
+// MARK: - 各种代理
+extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        
+        
+//        print("获取帧")
+        
+//        objc_sync_enter(self)
+        if let assetWriter = assetWriter {
+            if assetWriter.status != .writing && assetWriter.status != .unknown {
+                return
+            }
+        }
+        if let assetWriter = assetWriter, assetWriter.status == .unknown {
+            assetWriter.startWriting()
+            assetWriter.startSession(atSourceTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
+        }
+        if connection == self.videoConnection {
+            videoDataOutputQueue.async {
+                if let videoWriterInput = self.videoWriterInput, videoWriterInput.isReadyForMoreMediaData {
+                    videoWriterInput.append(sampleBuffer)
+                }
+            }
+        }
+        else if connection == self.audioConnection {
+            audioDataOutputQueue.async {
+                if let audioWriterInput = self.audioWriterInput, audioWriterInput.isReadyForMoreMediaData {
+                    audioWriterInput.append(sampleBuffer)
+                }
+            }
+        }
+//        objc_sync_exit(self)
+        
+
+    }
+    
+    
+}
+
+// MARK: - 录制保存相关
+extension CameraView {
+    
+    /// 准备开始记录
+    func startRecording() -> Void {
+        let tempFilePath = NSTemporaryDirectory() + "tmp" + "\(ProcessInfo().globallyUniqueString).mp4"
+        self.tmpFileURL = URL.init(fileURLWithPath: tempFilePath)
+        
+        let videoSetting: [String : AnyObject] = [
+            AVVideoCodecKey: AVVideoCodecType.h264 as AnyObject,
+            AVVideoWidthKey: 320 as AnyObject,
+            AVVideoHeightKey: 240 as AnyObject,
+            AVVideoCompressionPropertiesKey: [
+                AVVideoPixelAspectRatioKey: [
+                    AVVideoPixelAspectRatioHorizontalSpacingKey: 1,
+                    AVVideoPixelAspectRatioVerticalSpacingKey: 1
+                ],
+                AVVideoMaxKeyFrameIntervalKey: 1,
+                AVVideoAverageBitRateKey: 1280000
+            ] as AnyObject
+        ]
+        
+        let audioSetting: [String: AnyObject] = [
+            AVFormatIDKey: NSNumber(value: kAudioFormatMPEG4AAC),
+            AVNumberOfChannelsKey: 1 as AnyObject,
+            AVSampleRateKey: 22050 as AnyObject
+        ]
+        
+        do {
+            assetWriter = try! AVAssetWriter(outputURL: tmpFileURL!, fileType: AVFileType.mp4)
+            videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSetting)
+            videoWriterInput?.expectsMediaDataInRealTime = true
+            videoWriterInput?.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2))
+            if assetWriter!.canAdd(videoWriterInput!) {
+                assetWriter!.add(videoWriterInput!)
+            }
+            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: audioSetting)
+            audioWriterInput?.expectsMediaDataInRealTime = true
+            if assetWriter!.canAdd(audioWriterInput!) {
+                assetWriter!.add(audioWriterInput!)
+            }
+            
+            assetWriter!.startWriting()
+        }
+        
+        
+    }
+    
+    
+    func endRecording() {
+        if let assetWriter = self.assetWriter {
+            
+            if let videoWriterInput = videoWriterInput {
+                videoWriterInput.markAsFinished()
+            }
+            if let audioWriterInput = audioWriterInput {
+                audioWriterInput.markAsFinished()
+            }
+
+            assetWriter.finishWriting(completionHandler: {
+                
+                if self.isSaveTheFileToLibrary {
+                    PHPhotoLibrary.requestAuthorization({ (status) in
+                        if status == PHAuthorizationStatus.authorized {
+                            
+                            PHPhotoLibrary.shared().performChanges({
+                                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.tmpFileURL!)
+                                
+                            }, completionHandler: {[unowned self] (succeed, error) in
+                                if succeed {
+                                    self.videoCompleteHandler?(self.tmpFileURL!, error)
+                                    
+                                } else {
+                                    self.videoCompleteHandler?(self.tmpFileURL!, error)
+                                }
+                                do {
+                                    try FileManager.default.removeItem(at: self.tmpFileURL!)
+                                } catch {
+                                    print("can not save video to alblum")
+                                }
+                            })
+                        }
+                    })
+                    
+                }
+                
+            })
+            
+        }
+        
+    }
+    
+}
+
+// MARK: - 准备工作
+extension CameraView {
+    /// 绑定需要的回调
+    private func askForAccessDevice(withCompleteHandler completeHandler:((_ succeed: Bool) -> Void)?) {
+        // 挂起线程到处理完为止
+        self.sessionQueue.suspend()
+        
+        AVCaptureDevice.requestAccess(for: AVMediaType.video, completionHandler: { (succeed) in
+            if succeed {
+                AVCaptureDevice.requestAccess(for: AVMediaType.audio, completionHandler: { (succeed) in
+                    completeHandler?(succeed)
+                    // resume the queue
+                    self.sessionQueue.resume()
+                    
+                })
+                
+            } else {
+                completeHandler?(false)
+                self.sessionQueue.resume()
+                
+            }
+        })
+    }
+    
+    /// 添加属性观察
+    private func addObserver() {
+        let notiCenter = NotificationCenter.default
+        notiCenter.addObserver(self, selector: #selector(self.handleSubjectAreaChange(noti:)), name: NSNotification.Name.AVCaptureDeviceSubjectAreaDidChange, object: videoDeviceInput?.device)
+        
+    }
+    
+    /// 准备相机
+    public func prepareCamera() -> Bool {
+        
+        
+        if !hasCamera() {
+            return false
+        }
+        
+        // do not block the main queue
+        sessionQueue.async() {
+            
+            self.askForAccessDevice(withCompleteHandler: { (succeed) in
+                if !succeed {
+                    DispatchQueue.main.async {
+                        self.cannotAccessTheCameraHandler?()
+                    }
+                    
+                    return
+                }
+                
+                // add inputs and outputs
+                self.session.beginConfiguration()
+                
+                
+                // setting flashModel
+                self.flashModel = .auto
+                // setting mediaQuality
+                self.mediaQuality = .medium
+                self.session.commitConfiguration()
+                self.addObserver()
+                self.session.startRunning()
+                
+            })
+        }
+        
+        return true
+    }
+}
+
+// MARK: - 其他
 extension CameraView {
     /// 改变成像质量
     private func changeMediaQuality(_ mediaQuality: CameraAttributes.MediaQuality) -> Void {
@@ -240,10 +478,10 @@ extension CameraView {
         
         switch cameraPosion {
         case .back:
-            self.videoDeviceInput = self.backDeviceInput
+            self.videoDeviceInput = self.deviceInput(forDevicePosition: .back)
             
         case .front:
-            self.videoDeviceInput = self.frontDeviceInput
+            self.videoDeviceInput = self.deviceInput(forDevicePosition: .front)
             
         }
         
@@ -254,27 +492,7 @@ extension CameraView {
         
     }
     
-    /// 绑定需要的回调
-    private func askForAccessDevice(withCompleteHandler completeHandler:((_ succeed: Bool) -> Void)?) {
-        // 挂起线程到处理完为止
-        self.sessionQueue.suspend()
-        
-        AVCaptureDevice.requestAccess(for: AVMediaType.video, completionHandler: { (succeed) in
-            if succeed {
-                AVCaptureDevice.requestAccess(for: AVMediaType.audio, completionHandler: { (succeed) in
-                    completeHandler?(succeed)
-                    // resume the queue
-                    self.sessionQueue.resume()
-                    
-                })
-                
-            } else {
-                completeHandler?(false)
-                self.sessionQueue.resume()
-                
-            }
-        })
-    }
+
     
     /// 获取摄像头
     private func deviceInput(forDevicePosition position: AVCaptureDevice.Position) -> AVCaptureDeviceInput? {
@@ -286,7 +504,7 @@ extension CameraView {
                 break
             }
         }
-        
+
         return deviceInput
     }
     
@@ -326,31 +544,7 @@ extension CameraView {
         
     }
     
-    /// 添加声音设备
-    private func addAudioInputDevice() {
-        let audioDevice = AVCaptureDevice.default(for: AVMediaType.audio)
-        do {
-            
-            let audioDeviceInput = try AVCaptureDeviceInput(device: audioDevice!)
-            if self.session.canAddInput(audioDeviceInput) {
-                self.session.addInput(audioDeviceInput)
-                
-            } else {
-                print("can not add the audio inputDevice")
-                
-            }
-            
-        } catch {
-            print("can not add create the audio input")
-        }
-    }
-    
-    /// 添加属性观察
-    private func addObserver() {
-        let notiCenter = NotificationCenter.default
-        notiCenter.addObserver(self, selector: #selector(self.handleSubjectAreaChange(noti:)), name: NSNotification.Name.AVCaptureDeviceSubjectAreaDidChange, object: videoDeviceInput?.device)
-        
-    }
+
 }
 
 extension CameraView {
@@ -388,130 +582,89 @@ extension CameraView {
     }
     
     /// 开始捕捉视频
-    public func startCapturingVideo() -> Bool {
+//    public func startCapturingVideo() -> Bool {
+//
+//        self.session.beginConfiguration()
+//        if !self.hasCamera() {
+//            return false
+//
+//        }
+//
+//        let connection = self.movieFileOutput?.connection(with: AVMediaType.video)
+//        connection?.videoOrientation = (self.previewLayer.connection?.videoOrientation)!
+//        self.session.commitConfiguration()
+//
+//        let tempFilePath = NSTemporaryDirectory() + "/" + "makeNoise\(arc4random()).mp4"
+//        let tempVideoURL = URL.init(fileURLWithPath: tempFilePath)
+    
+//        PHPhotoLibrary.requestAuthorization { (status) in
+//
+//            if status == PHAuthorizationStatus.authorized {
+//
+//                try! PHPhotoLibrary.shared().performChangesAndWait {
+//
+//                    let videoRequest = PHAssetCreationRequest.init(for: PHAsset)
+//
+//                    videoRequest?.addResource(with: PHAssetResourceType.video, fileURL: tempVideoURL, options: nil)
+//
+//
+//                }
+//
+//
+//            }
+//
+//
+//
+//        }
+        
+//        self.movieFileOutput?.startRecording(to: tempVideoURL, recordingDelegate: self)
+        
+        
 
-        self.session.beginConfiguration()
-        if !self.hasCamera() {
-            return false
-            
-        }
         
-        let connection = self.movieFileOutput?.connection(with: AVMediaType.video)
-        connection?.videoOrientation = (self.previewLayer.connection?.videoOrientation)!
-        self.session.commitConfiguration()
-        
-        let tempFileName = "\(ProcessInfo().globallyUniqueString).mov"
-        let tempFilePath = NSTemporaryDirectory() + "/" + tempFileName
-        let tempVideoURL = URL.init(fileURLWithPath: tempFilePath)
-        
-        self.movieFileOutput?.startRecording(to: tempVideoURL, recordingDelegate: self)
-        
-        return true
-    }
+//        return true
+//    }
+//
+//
+//
+//    public func stopCapturingVideo(withHandler handler: @escaping (_ videoUrl: URL?, _ error: Error?) -> ()) {
+//        videoCompleteHandler = handler
+//        movieFileOutput?.stopRecording()
+//    }
     
-    /// 准备相机
-    public func prepareCamera() -> Bool {
-        
-        
-        if !hasCamera() {
-            return false
-        }
-        
-        // do not block the main queue
-        sessionQueue.async() {
-            
-            self.askForAccessDevice(withCompleteHandler: { (succeed) in
-                if !succeed {
-                    DispatchQueue.main.async {
-                        self.cannotAccessTheCameraHandler?()
-                    }
-                    
-                    return
-                }
-                
-                // add inputs and outputs
-                self.session.beginConfiguration()
-                
-                // this will add current device
-                self.cameraPosition = .front
-                // setting flashModel
-                self.flashModel = .auto
-                // setting mediaQuality
-                self.mediaQuality = .medium
-                // addAudioInputDevice
-                self.addAudioInputDevice()
-                self.session.commitConfiguration()
-                self.addObserver()
-                self.session.startRunning()
-                
-            })
-        }
-        
-        return true
-    }
-    
-    public func stopCapturingVideo(withHandler handler: @escaping (_ videoUrl: URL?, _ error: Error?) -> ()) {
-        videoCompleteHandler = handler
-        movieFileOutput?.stopRecording()
-    }
-    
-}
-
-extension CameraView {
     private func hasCamera() -> Bool {
-        if frontDeviceInput != nil || backDeviceInput != nil {
+        if self.deviceInput(forDevicePosition: .back) != nil
+            ||
+            self.deviceInput(forDevicePosition: .front) != nil {
+            
             return true
             
-        } else {
+        }else{
+            
             return false
             
         }
     }
+    
 }
 
-extension CameraView: AVCaptureFileOutputRecordingDelegate {
-    
-    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-        var success = true
-        
-        if error != nil {// sometimes there may be error but the video is caputed successfully
-            success = (error as! CustomNSError).errorUserInfo[AVErrorRecordingSuccessfullyFinishedKey] as! Bool
-            
-        }
-        
-        if (success) {
-            if isSaveTheFileToLibrary {
-                
-                PHPhotoLibrary.requestAuthorization({ (status) in
-                    if status == PHAuthorizationStatus.authorized {
-                        
-                        PHPhotoLibrary.shared().performChanges({
-                            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputFileURL)
-                            
-                        }, completionHandler: {[unowned self] (succeed, error) in
-                            if succeed {
-                                self.videoCompleteHandler?(outputFileURL, error)
-                                
-                            } else {
-                                self.videoCompleteHandler?(outputFileURL, error)
-                            }
-                            do {
-                                try FileManager.default.removeItem(at: outputFileURL)
-                            } catch {
-                                print("can not save video to alblum")
-                            }
-                        })
-                    }
-                })
-                
-            } else {
-                self.videoCompleteHandler?(outputFileURL, error)
-                
-            }
-        }
-    }
-    
-    
-}
+
+//extension CameraView: AVCaptureFileOutputRecordingDelegate {
+//
+//    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+//        var success = true
+//
+//        if error != nil {// sometimes there may be error but the video is caputed successfully
+//            success = (error as! CustomNSError).errorUserInfo[AVErrorRecordingSuccessfullyFinishedKey] as! Bool
+//
+//        }
+//
+//        if (success) {
+//
+//        }
+//    }
+//
+//
+//}
 
 
