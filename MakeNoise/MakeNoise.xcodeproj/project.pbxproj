@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C957F1E2160E9D8005B498C /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F1A2160E9D7005B498C /* OpenCVWrapper.mm */; };
+		5C957F232160EC37005B498C /* Estimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F212160EC37005B498C /* Estimator.swift */; };
+		5C957F242160EC37005B498C /* Cocopart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F222160EC37005B498C /* Cocopart.swift */; };
+		5C957F262160EEC8005B498C /* ios_conversions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F252160EEC8005B498C /* ios_conversions.mm */; };
 		7CC0C2392160C038005951CA /* PlayVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2382160C038005951CA /* PlayVideoViewController.swift */; };
 		7CC0C2462160C4C0005951CA /* shake_E2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23B2160C4C0005951CA /* shake_E2.wav */; };
 		7CC0C2472160C4C0005951CA /* pluck5_B1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23C2160C4C0005951CA /* pluck5_B1.wav */; };
@@ -50,6 +54,12 @@
 
 /* Begin PBXFileReference section */
 		4D809D14179CACDF505466F2 /* Pods-MakeNoise.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.release.xcconfig"; path = "Target Support Files/Pods-MakeNoise/Pods-MakeNoise.release.xcconfig"; sourceTree = "<group>"; };
+		5C957F182160E9D7005B498C /* MakeNoise-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MakeNoise-Bridging-Header.h"; sourceTree = "<group>"; };
+		5C957F1A2160E9D7005B498C /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
+		5C957F1C2160E9D8005B498C /* OpenCVWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
+		5C957F212160EC37005B498C /* Estimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Estimator.swift; sourceTree = "<group>"; };
+		5C957F222160EC37005B498C /* Cocopart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cocopart.swift; sourceTree = "<group>"; };
+		5C957F252160EEC8005B498C /* ios_conversions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ios_conversions.mm; path = ../../../../../SwiftOpenPose/SwiftOpenPose/Vendors/OpenCV/ios_conversions.mm; sourceTree = "<group>"; };
 		7A79A83E99E693A2637FA976 /* Pods-MakeNoise.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.debug.xcconfig"; path = "Target Support Files/Pods-MakeNoise/Pods-MakeNoise.debug.xcconfig"; sourceTree = "<group>"; };
 		7CC0C2382160C038005951CA /* PlayVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayVideoViewController.swift; sourceTree = "<group>"; };
 		7CC0C23B2160C4C0005951CA /* shake_E2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = shake_E2.wav; sourceTree = "<group>"; };
@@ -92,6 +102,8 @@
 		7CD229BB215C777A0029F4CC /* CameraAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAttributes.swift; sourceTree = "<group>"; };
 		7CD229BF215C79A40029F4CC /* DealWithCameraAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DealWithCameraAttributes.swift; sourceTree = "<group>"; };
 		8558B08243A85E41D4A1F016 /* Pods_MakeNoise.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MakeNoise.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8551CFEDD522D1C502CD133 /* Pods-MakeNoise.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.release.xcconfig"; path = "Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise.release.xcconfig"; sourceTree = "<group>"; };
+		EC3EF839070F3D485EC4526D /* Pods-MakeNoise.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +118,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C957F172160E9A9005B498C /* Openpose */ = {
+			isa = PBXGroup;
+			children = (
+				5C957F252160EEC8005B498C /* ios_conversions.mm */,
+				5C957F222160EC37005B498C /* Cocopart.swift */,
+				5C957F212160EC37005B498C /* Estimator.swift */,
+				5C957F1C2160E9D8005B498C /* OpenCVWrapper.h */,
+				5C957F1A2160E9D7005B498C /* OpenCVWrapper.mm */,
+				5C957F182160E9D7005B498C /* MakeNoise-Bridging-Header.h */,
+			);
+			path = Openpose;
+			sourceTree = "<group>";
+		};
 		7CC0C2372160C008005951CA /* PlayVideoVC */ = {
 			isa = PBXGroup;
 			children = (
@@ -182,6 +207,7 @@
 		7CD229A6215C740A0029F4CC /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				5C957F172160E9A9005B498C /* Openpose */,
 				7CD229AF215C740A0029F4CC /* GenericTools */,
 				7CD229A7215C740A0029F4CC /* AppStandard */,
 				7CD229AA215C740A0029F4CC /* Model */,
@@ -303,6 +329,8 @@
 			children = (
 				7A79A83E99E693A2637FA976 /* Pods-MakeNoise.debug.xcconfig */,
 				4D809D14179CACDF505466F2 /* Pods-MakeNoise.release.xcconfig */,
+				EC3EF839070F3D485EC4526D /* Pods-MakeNoise.debug.xcconfig */,
+				A8551CFEDD522D1C502CD133 /* Pods-MakeNoise.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -341,6 +369,7 @@
 				TargetAttributes = {
 					7CD2298E215C731B0029F4CC = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1000;
 					};
 				};
 			};
@@ -417,11 +446,13 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh",
 				"${PODS_ROOT}/AudioKit/iOS/AudioKitUI.framework",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/HGRippleRadarView/HGRippleRadarView.framework",
+				"${BUILT_PRODUCTS_DIR}/OpenCV/opencv2.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Upsurge/Upsurge.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -430,11 +461,13 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AudioKitUI.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HGRippleRadarView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/opencv2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Upsurge.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -446,8 +479,10 @@
 			files = (
 				7CC0C2692160C50D005951CA /* BaseMovableMusicKey.swift in Sources */,
 				7CD229B4215C740A0029F4CC /* ExtensionForSomeClass.swift in Sources */,
+				5C957F232160EC37005B498C /* Estimator.swift in Sources */,
 				7CC0C2612160C503005951CA /* BeatTimer.swift in Sources */,
 				7CD229BC215C777A0029F4CC /* CameraAttributes.swift in Sources */,
+				5C957F242160EC37005B498C /* Cocopart.swift in Sources */,
 				7CD229BA215C76F00029F4CC /* CameraView.swift in Sources */,
 				7CC0C2622160C503005951CA /* TimbreManager.swift in Sources */,
 				7CC0C26A2160C50D005951CA /* BaseMusicKey.swift in Sources */,
@@ -459,6 +494,8 @@
 				7CD229C0215C79A40029F4CC /* DealWithCameraAttributes.swift in Sources */,
 				7CC0C2582160C4EC005951CA /* MusicKeyAttributesModel.swift in Sources */,
 				7CD22995215C731C0029F4CC /* ViewController.swift in Sources */,
+				5C957F262160EEC8005B498C /* ios_conversions.mm in Sources */,
+				5C957F1E2160E9D8005B498C /* OpenCVWrapper.mm in Sources */,
 				7CC0C26C2160C50D005951CA /* TouchEventView.swift in Sources */,
 				7CC0C2572160C4EC005951CA /* Timbres.swift in Sources */,
 				7CD22993215C731C0029F4CC /* AppDelegate.swift in Sources */,
@@ -614,8 +651,9 @@
 			baseConfigurationReference = 7A79A83E99E693A2637FA976 /* Pods-MakeNoise.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = L9ZC5Q2DDV;
+				DEVELOPMENT_TEAM = 4JG3UTZKWR;
 				INFOPLIST_FILE = MakeNoise/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -624,6 +662,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Young.MakeNoise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MakeNoise/Class/Openpose/MakeNoise-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -634,8 +674,9 @@
 			baseConfigurationReference = 4D809D14179CACDF505466F2 /* Pods-MakeNoise.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = L9ZC5Q2DDV;
+				DEVELOPMENT_TEAM = 4JG3UTZKWR;
 				INFOPLIST_FILE = MakeNoise/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -644,6 +685,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = Young.MakeNoise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "MakeNoise/Class/Openpose/MakeNoise-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

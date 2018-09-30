@@ -14,4 +14,7 @@ target 'MakeNoise' do
     pod 'AudioKit', '~> 4.0'
     pod 'AudioKit/UI'
 
+    pod 'Upsurge', '~> 0.10.2'
+    pod 'OpenCV', '~> 3.3.1'
+
 end
