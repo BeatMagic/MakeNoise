@@ -742,8 +742,8 @@ extension CameraView {
         }
         print(pos)
         
-        self.musicKeyboard.recognizedPointArray = pos
-    
+//        self.musicKeyboard.recognizedPointArray = pos
+        self.musicKeyboard.didSetRecognizedPointArray(pos)
         
     }
 
@@ -767,7 +767,7 @@ extension CameraView {
                 centers[i] = CGPoint(x: Int(bodyPart.x * CGFloat(ImageWidth) + 0.5), y: Int(bodyPart.y * CGFloat(ImageHeight) + 0.5))
                 
                 if i==4 || i==7{
-                    self.musicKeyboard.recognizedPointArray.append(centers[i]!)
+                    posSet.append(centers[i]!)
                 }
             }
             
@@ -786,7 +786,13 @@ extension CameraView {
         }
         print(posSet)
         
-//        self.musicKeyboard.recognizedPointArray = pos
+        if posSet.count != 0 {
+//            self.musicKeyboard.Signage = false
+            self.musicKeyboard.didSetRecognizedPointArray(posSet)
+            
+        }
+        
+        
         
         let targetImageSize = CGSize(width: ImageWidth, height: ImageWidth)
         
