@@ -716,7 +716,7 @@ extension CameraView {
         let mm = Array(doubleBuffer)
         
         
-        drawLine(mm)
+        setPos(mm)
         
 
     }
@@ -727,23 +727,26 @@ extension CameraView {
         
         let humans = com.estimate(mm);
         
-        var pos = [CGPoint]()
+        var pos = [CGPoint?]()
         for human in humans {
             for i in [4,7] {
                 if human.bodyParts.keys.index(of: i) == nil {
+                    pos.append(nil)
                     continue
                 }
                 let bodyPart = human.bodyParts[i]!
                 //centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
-                let pt = CGPoint(x: Int(bodyPart.x * CGFloat(ImageWidth) + 0.5), y: Int(bodyPart.y * CGFloat(ImageHeight) + 0.5))
+                let pt = CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5))
                 pos.append(pt)
             }
             
         }
         print(pos)
         
-//        self.musicKeyboard.recognizedPointArray = pos
-        self.musicKeyboard.didSetRecognizedPointArray(pos)
+        if pos.count != 0 {
+            self.musicKeyboard.didSetRecognizedPointArray(pos)
+            
+        }
         
     }
 
@@ -817,9 +820,7 @@ extension CameraView {
         
         var boneImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
-//        if pos.count>0{
-//            boneImage = boneImage.resize(to: CGSize(width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight()))
-//        }
+
         
         DispatchQueue.main.async {
             self.imageView.image = boneImage
