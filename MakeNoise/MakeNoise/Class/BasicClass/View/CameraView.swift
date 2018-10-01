@@ -10,10 +10,30 @@ import UIKit
 import AVFoundation
 import Photos
 
+import Vision
+import Upsurge
+
 class CameraView: UIView {
 // MARK: - 相机相关属性
     /// 是否到本地 (保存)
     var isSaveTheFileToLibrary = true
+    
+    let model = MobileOpenPose()
+    let ImageWidth = 368
+    let ImageHeight = 368
+    lazy var classificationRequest: [VNRequest] = {
+        do {
+            let model = try VNCoreMLModel(for: self.model.model)
+            let classificationRequest = VNCoreMLRequest(model: model, completionHandler: self.handleClassification)
+            return [ classificationRequest ]
+        } catch {
+            fatalError("Can't load Vision ML model: \(error)")
+        }
+    }()
+    
+    var imageView: UIImageView = UIImageView.init(
+        frame: CGRect.init(x: 0, y: 0, width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight())
+    )
     
     /// 画质 (中)
     var mediaQuality: CameraAttributes.MediaQuality = .medium {
@@ -22,6 +42,10 @@ class CameraView: UIView {
             self.changeMediaQuality(mediaQuality)
             self.session.sessionPreset = AVCaptureSession.Preset.cif352x288
             videoConnection = videoDataOutput.connection(with: .video)
+            
+            videoConnection!.videoOrientation = .portrait
+//            videoConnection!.videoOrientation = (self.previewLayer.connection?.videoOrientation)!
+            
             audioConnection = audioDataOutput.connection(with: .audio)
             self.session.commitConfiguration()
             
@@ -34,6 +58,7 @@ class CameraView: UIView {
             self.sessionQueue.async {
                 self.session.beginConfiguration()
                 self.changeCameraPosion(self.cameraPosition)
+                self.videoConnection?.videoOrientation = .portrait
                 self.session.commitConfiguration()
             }
         }
@@ -98,7 +123,13 @@ class CameraView: UIView {
     
 // MARK: - 保存
     var assetWriter: AVAssetWriter?
-    var videoWriterInput: AVAssetWriterInput?
+    var videoWriterInput: AVAssetWriterInput = {
+        let tmpVideoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: CameraView.getVideoSetting())
+        tmpVideoWriterInput.expectsMediaDataInRealTime = true
+//        tmpVideoWriterInput.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2))
+        
+        return tmpVideoWriterInput
+    }()
     var audioWriterInput: AVAssetWriterInput?
     
 // MARK: - 文件目录
@@ -201,7 +232,10 @@ extension CameraView {
     
     /// 设置UI
     func setUI() -> Void {
+        self.addSubview(self.imageView)
         
+        //self.imageView.backgroundColor = UIColor.blue
+        //self.imageView.alpha = 0.3
     }
     
     /// 点击事件
@@ -232,10 +266,12 @@ extension CameraView {
 // MARK: - 各种代理
 extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
     
+    
+    
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         
-//        print("获取帧")
+        //print("获取帧")
         
 //        objc_sync_enter(self)
         if let assetWriter = assetWriter {
@@ -249,8 +285,8 @@ extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAud
         }
         if connection == self.videoConnection {
             videoDataOutputQueue.async {
-                if let videoWriterInput = self.videoWriterInput, videoWriterInput.isReadyForMoreMediaData {
-                    videoWriterInput.append(sampleBuffer)
+                if  self.videoWriterInput.isReadyForMoreMediaData {
+                    self.videoWriterInput.append(sampleBuffer)
                 }
             }
         }
@@ -263,6 +299,43 @@ extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAud
         }
 //        objc_sync_exit(self)
         
+        
+        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        
+        var ciImage: CIImage
+        
+        if cameraPosition == .front {
+            let tmpCiImage = CIImage(cvImageBuffer: imageBuffer)
+            let transform = CGAffineTransform(scaleX: -1, y: 1)
+            
+//            let obj = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
+            
+            ciImage = tmpCiImage.transformed(by: transform)
+            
+            
+        }else {
+            
+            ciImage = CIImage(cvImageBuffer: imageBuffer)
+        }
+        
+        
+        
+        guard let pixelBuffer = UIImage(ciImage: ciImage).resize(to: CGSize(width: ImageWidth,height: ImageHeight)).pixelBuffer() else { return }
+        
+        var requestOptions:[VNImageOption: Any] = [:]
+        if let cameraData = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) {
+            requestOptions = [.cameraIntrinsics: cameraData]
+        }
+        
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: requestOptions)
+        
+        do {
+            try imageRequestHandler.perform(self.classificationRequest)
+            
+            
+        } catch {
+            print(error)
+        }
 
     }
     
@@ -277,35 +350,12 @@ extension CameraView {
         let tempFilePath = NSTemporaryDirectory() + "tmp" + "\(ProcessInfo().globallyUniqueString).mp4"
         self.tmpFileURL = URL.init(fileURLWithPath: tempFilePath)
         
-        let videoSetting: [String : AnyObject] = [
-            AVVideoCodecKey: AVVideoCodecType.h264 as AnyObject,
-            AVVideoWidthKey: 320 as AnyObject,
-            AVVideoHeightKey: 240 as AnyObject,
-            AVVideoCompressionPropertiesKey: [
-                AVVideoPixelAspectRatioKey: [
-                    AVVideoPixelAspectRatioHorizontalSpacingKey: 1,
-                    AVVideoPixelAspectRatioVerticalSpacingKey: 1
-                ],
-                AVVideoMaxKeyFrameIntervalKey: 1,
-                AVVideoAverageBitRateKey: 1280000
-            ] as AnyObject
-        ]
-        
-        let audioSetting: [String: AnyObject] = [
-            AVFormatIDKey: NSNumber(value: kAudioFormatMPEG4AAC),
-            AVNumberOfChannelsKey: 1 as AnyObject,
-            AVSampleRateKey: 22050 as AnyObject
-        ]
-        
         do {
             assetWriter = try! AVAssetWriter(outputURL: tmpFileURL!, fileType: AVFileType.mp4)
-            videoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSetting)
-            videoWriterInput?.expectsMediaDataInRealTime = true
-            videoWriterInput?.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi / 2))
-            if assetWriter!.canAdd(videoWriterInput!) {
-                assetWriter!.add(videoWriterInput!)
+            if assetWriter!.canAdd(videoWriterInput) {
+                assetWriter!.add(videoWriterInput)
             }
-            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: audioSetting)
+            audioWriterInput = AVAssetWriterInput(mediaType: AVMediaType.audio, outputSettings: CameraView.getAudioSetting())
             audioWriterInput?.expectsMediaDataInRealTime = true
             if assetWriter!.canAdd(audioWriterInput!) {
                 assetWriter!.add(audioWriterInput!)
@@ -321,9 +371,7 @@ extension CameraView {
     func endRecording() {
         if let assetWriter = self.assetWriter {
             
-            if let videoWriterInput = videoWriterInput {
-                videoWriterInput.markAsFinished()
-            }
+            videoWriterInput.markAsFinished()
             if let audioWriterInput = audioWriterInput {
                 audioWriterInput.markAsFinished()
             }
@@ -485,8 +533,16 @@ extension CameraView {
             
         }
         
+        
         if self.videoDeviceInput != nil && self.session.canAddInput(self.videoDeviceInput!) {
             self.session.addInput(self.videoDeviceInput!)
+            
+//            if cameraPosion == .back {
+//                videoConnection!.videoOrientation = (self.previewLayer.connection?.videoOrientation)!
+//
+//            }
+            
+            self.mediaQuality = .medium
             
         }
         
@@ -647,6 +703,186 @@ extension CameraView {
     }
     
 }
+
+
+extension CameraView {
+
+    func handleClassification(request: VNRequest, error: Error?) {
+        
+        guard let observations = request.results as? [VNCoreMLFeatureValueObservation] else { fatalError() }
+        let mlarray = observations[0].featureValue.multiArrayValue!
+        let length = mlarray.count
+        let doublePtr =  mlarray.dataPointer.bindMemory(to: Double.self, capacity: length)
+        let doubleBuffer = UnsafeBufferPointer(start: doublePtr, count: length)
+        let mm = Array(doubleBuffer)
+        
+
+        
+        drawLine(mm)
+        
+
+    }
+
+    func drawLine(_ mm: Array<Double>) {
+        let com = PoseEstimator(ImageWidth,ImageHeight)
+        
+      
+        let humans = com.estimate(mm);
+        
+        var keypoint = [Int32]()
+        var pos = [CGPoint]()
+        for human in humans {
+            var centers = [Int: CGPoint]()
+            for i in 0...CocoPart.Background.rawValue {
+                if human.bodyParts.keys.index(of: i) == nil {
+                    continue
+                }
+                let bodyPart = human.bodyParts[i]!
+                //centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
+                centers[i] = CGPoint(x: Int(bodyPart.x * CGFloat(ImageWidth) + 0.5), y: Int(bodyPart.y * CGFloat(ImageHeight) + 0.5))
+            }
+            
+            for (pairOrder, (pair1,pair2)) in CocoPairsRender.enumerated() {
+                
+                if human.bodyParts.keys.index(of: pair1) == nil || human.bodyParts.keys.index(of: pair2) == nil {
+                    continue
+                }
+                if centers.index(forKey: pair1) != nil && centers.index(forKey: pair2) != nil{
+                    keypoint.append(Int32(pairOrder))
+                    pos.append(centers[pair1]!)
+                    pos.append(centers[pair2]!)
+                    //                    addLine(fromPoint: centers[pair1]!, toPoint: centers[pair2]!, color: CocoColors[pairOrder])
+                }
+            }
+        }
+        print(pos)
+        
+        let targetImageSize = CGSize(width: ImageWidth, height: ImageWidth)
+        
+        //UIGraphicsBeginImageContext(targetImageSize)
+        let scale: CGFloat = 0
+        UIGraphicsBeginImageContextWithOptions(targetImageSize, false, scale)
+        var context:CGContext = UIGraphicsGetCurrentContext()!
+        
+        for i in 0..<pos.count {
+            if i%2 == 0 {
+                let center1 = pos[i]
+                let center2 = pos[i+1]
+                
+                let color = UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+                
+                addLine(context: &context, fromPoint: center1, toPoint: center2, color: color)
+            }
+        }
+        
+        var boneImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        if pos.count>0{
+            boneImage = boneImage.resize(to: CGSize(width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight()))
+        }
+        
+        DispatchQueue.main.async {
+            self.imageView.image = boneImage
+        }
+        
+    }
+    
+    func addLine(context: inout CGContext, fromPoint start: CGPoint, toPoint end:CGPoint, color: UIColor) {
+        context.setLineWidth(5.0)
+        context.setStrokeColor(color.cgColor)
+        
+        context.move(to: start)
+        context.addLine(to: end)
+        
+        context.closePath()
+        context.strokePath()
+    }
+}
+
+extension UIImage {
+    func resize(to newSize: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: newSize.width, height: newSize.height), false, 1.0)
+        self.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        
+        return resizedImage
+    }
+    
+    func pixelBuffer() -> CVPixelBuffer? {
+        let width = self.size.width
+        let height = self.size.height
+        let attrs = [kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue,
+                     kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue] as CFDictionary
+        var pixelBuffer: CVPixelBuffer?
+        let status = CVPixelBufferCreate(kCFAllocatorDefault,
+                                         Int(width),
+                                         Int(height),
+                                         kCVPixelFormatType_32ARGB,
+                                         attrs,
+                                         &pixelBuffer)
+        
+        guard let resultPixelBuffer = pixelBuffer, status == kCVReturnSuccess else {
+            return nil
+        }
+        
+        CVPixelBufferLockBaseAddress(resultPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+        let pixelData = CVPixelBufferGetBaseAddress(resultPixelBuffer)
+        
+        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+        guard let context = CGContext(data: pixelData,
+                                      width: Int(width),
+                                      height: Int(height),
+                                      bitsPerComponent: 8,
+                                      bytesPerRow: CVPixelBufferGetBytesPerRow(resultPixelBuffer),
+                                      space: rgbColorSpace,
+                                      bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) else {
+                                        return nil
+        }
+        
+        context.translateBy(x: 0, y: height)
+        context.scaleBy(x: 1.0, y: -1.0)
+        
+        UIGraphicsPushContext(context)
+        self.draw(in: CGRect(x: 0, y: 0, width: width, height: height))
+        UIGraphicsPopContext()
+        CVPixelBufferUnlockBaseAddress(resultPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+        
+        return resultPixelBuffer
+    }
+}
+
+extension CameraView {
+    static func getVideoSetting() -> [String : AnyObject] {
+        return [
+            AVVideoCodecKey: AVVideoCodecType.h264 as AnyObject,
+            AVVideoWidthKey: 320 as AnyObject,
+            AVVideoHeightKey: 240 as AnyObject,
+            AVVideoCompressionPropertiesKey: [
+                AVVideoPixelAspectRatioKey: [
+                    AVVideoPixelAspectRatioHorizontalSpacingKey: 1,
+                    AVVideoPixelAspectRatioVerticalSpacingKey: 1
+                ],
+                AVVideoMaxKeyFrameIntervalKey: 1,
+                AVVideoAverageBitRateKey: 1280000
+                ] as AnyObject
+        ]
+        
+        
+        
+    }
+    
+    static func getAudioSetting() -> [String : AnyObject]  {
+        return [
+            AVFormatIDKey: NSNumber(value: kAudioFormatMPEG4AAC),
+            AVNumberOfChannelsKey: 1 as AnyObject,
+            AVSampleRateKey: 22050 as AnyObject
+        ]
+    }
+    
+    
+}
+
 
 
 //extension CameraView: AVCaptureFileOutputRecordingDelegate {

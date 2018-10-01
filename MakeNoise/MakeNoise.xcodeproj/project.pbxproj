@@ -10,6 +10,8 @@
 		5C957F1E2160E9D8005B498C /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F1A2160E9D7005B498C /* OpenCVWrapper.mm */; };
 		5C957F232160EC37005B498C /* Estimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F212160EC37005B498C /* Estimator.swift */; };
 		5C957F242160EC37005B498C /* Cocopart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F222160EC37005B498C /* Cocopart.swift */; };
+		5C957F282161B602005B498C /* ios_conversions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F272161B602005B498C /* ios_conversions.mm */; };
+		5C957F2A2161C6EB005B498C /* MobileOpenPose.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 5C957F292161C6EB005B498C /* MobileOpenPose.mlmodel */; };
 		7CC0C2392160C038005951CA /* PlayVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC0C2382160C038005951CA /* PlayVideoViewController.swift */; };
 		7CC0C2462160C4C0005951CA /* shake_E2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23B2160C4C0005951CA /* shake_E2.wav */; };
 		7CC0C2472160C4C0005951CA /* pluck5_B1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7CC0C23C2160C4C0005951CA /* pluck5_B1.wav */; };
@@ -58,6 +60,8 @@
 		5C957F1C2160E9D8005B498C /* OpenCVWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
 		5C957F212160EC37005B498C /* Estimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Estimator.swift; sourceTree = "<group>"; };
 		5C957F222160EC37005B498C /* Cocopart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cocopart.swift; sourceTree = "<group>"; };
+		5C957F272161B602005B498C /* ios_conversions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ios_conversions.mm; sourceTree = "<group>"; };
+		5C957F292161C6EB005B498C /* MobileOpenPose.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MobileOpenPose.mlmodel; sourceTree = "<group>"; };
 		7A79A83E99E693A2637FA976 /* Pods-MakeNoise.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.debug.xcconfig"; path = "Target Support Files/Pods-MakeNoise/Pods-MakeNoise.debug.xcconfig"; sourceTree = "<group>"; };
 		7CC0C2382160C038005951CA /* PlayVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayVideoViewController.swift; sourceTree = "<group>"; };
 		7CC0C23B2160C4C0005951CA /* shake_E2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = shake_E2.wav; sourceTree = "<group>"; };
@@ -119,6 +123,7 @@
 		5C957F172160E9A9005B498C /* Openpose */ = {
 			isa = PBXGroup;
 			children = (
+				5C957F272161B602005B498C /* ios_conversions.mm */,
 				5C957F222160EC37005B498C /* Cocopart.swift */,
 				5C957F212160EC37005B498C /* Estimator.swift */,
 				5C957F1C2160E9D8005B498C /* OpenCVWrapper.h */,
@@ -196,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				7CD22999215C731D0029F4CC /* Assets.xcassets */,
+				5C957F292161C6EB005B498C /* MobileOpenPose.mlmodel */,
 				7CC0C23A2160C4C0005951CA /* ToneFiles */,
 			);
 			name = Resource;
@@ -443,7 +449,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh",
+				"${SRCROOT}/Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh",
 				"${PODS_ROOT}/AudioKit/iOS/AudioKitUI.framework",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/HGRippleRadarView/HGRippleRadarView.framework",
@@ -464,7 +470,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -491,6 +497,7 @@
 				7CD229C0215C79A40029F4CC /* DealWithCameraAttributes.swift in Sources */,
 				7CC0C2582160C4EC005951CA /* MusicKeyAttributesModel.swift in Sources */,
 				7CD22995215C731C0029F4CC /* ViewController.swift in Sources */,
+				5C957F282161B602005B498C /* ios_conversions.mm in Sources */,
 				5C957F1E2160E9D8005B498C /* OpenCVWrapper.mm in Sources */,
 				7CC0C26C2160C50D005951CA /* TouchEventView.swift in Sources */,
 				7CC0C2572160C4EC005951CA /* Timbres.swift in Sources */,
@@ -499,6 +506,7 @@
 				7CD229B5215C740A0029F4CC /* ToolClass.swift in Sources */,
 				7CC0C2392160C038005951CA /* PlayVideoViewController.swift in Sources */,
 				7CC0C26B2160C50D005951CA /* OperateKeysView.swift in Sources */,
+				5C957F2A2161C6EB005B498C /* MobileOpenPose.mlmodel in Sources */,
 				7CD229B6215C740A0029F4CC /* BasicKnowledge.swift in Sources */,
 				7CC0C2552160C4EC005951CA /* MusicAttributesModel.swift in Sources */,
 			);
@@ -648,16 +656,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = L9ZC5Q2DDV;
+				DEVELOPMENT_TEAM = B8LQ5JPNA3;
 				INFOPLIST_FILE = MakeNoise/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Young.MakeNoise;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zwxbest.MakeNoise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MakeNoise/Class/Openpose/MakeNoise-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
@@ -671,16 +681,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = L9ZC5Q2DDV;
+				DEVELOPMENT_TEAM = B8LQ5JPNA3;
 				INFOPLIST_FILE = MakeNoise/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = Young.MakeNoise;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zwxbest.MakeNoise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MakeNoise/Class/Openpose/MakeNoise-Bridging-Header.h";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 1;
