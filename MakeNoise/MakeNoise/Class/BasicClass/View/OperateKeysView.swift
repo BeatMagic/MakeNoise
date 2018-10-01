@@ -27,7 +27,7 @@ class OperateKeysView: UIView {
     /// 模拟Touch点的UIView数组
     private let touchEventViewArray: [TouchEventView] = {
         var tmpArray: [TouchEventView] = []
-        for index in 0 ..< 2 {
+        for index in 0 ..< 17 {
             let touchEventView = TouchEventView.init(
                 frame: CGRect.init(
                     x: ToolClass.getScreenWidth() / 2 - 15, y: ToolClass.getScreenHeight() / 2 - 15,
@@ -41,30 +41,6 @@ class OperateKeysView: UIView {
         
         return tmpArray
     }()
-    
-    private var touchStatus: Int = 0 {
-        didSet {
-            
-            DispatchQueue.main.async {
-                switch self.touchStatus {
-                    
-                case 1:
-                    self.touchEventViewArray[0].isHidden = false
-                    
-                case 2:
-                    self.touchEventViewArray[1].isHidden = false
-                    
-                case 3:
-                    self.touchEventViewArray[0].isHidden = false
-                    self.touchEventViewArray[1].isHidden = false
-                    
-                default:
-                    self.touchEventViewArray[0].isHidden = true
-                    self.touchEventViewArray[1].isHidden = true
-                }
-            }
-        }
-    }
     
     /// 上次识别出来的点数组
     private var prevRecognizedPointArray: [CGPoint?] = [nil, nil]
@@ -312,13 +288,13 @@ extension OperateKeysView {
         
         
         
-        if self.presentTouchArray.count == 1 {
-            self.touchStatus = 1
-            
-        }else {
-            self.touchStatus = 2
-            
-        }
+//        if self.presentTouchArray.count == 1 {
+//            self.touchStatus = 1
+//
+//        }else {
+//            self.touchStatus = 2
+//
+//        }
         
         
         switch self.presentTouchArray.count {
@@ -767,83 +743,84 @@ extension OperateKeysView: TouchEventViewDelegate {
 // MARK: - 外部赋值之后
 extension OperateKeysView {
     func didSetRecognizedPointArray(_ recognizedPointArray: [CGPoint?]) -> Void {
-            
+        
         DispatchQueue.main.async {
             self.isUserInteractionEnabled = false
         }
         
-//        self.touchEventDistanceModelArray.removeAll()
-//        var touchEventDistanceModelArray = self.touchEventDistanceModelArray
+        for index in 0 ..< 17 {
+            
+            if let point = recognizedPointArray[index] {
+                DispatchQueue.main.async {
+                    self.touchEventViewArray[index].isHidden = false
+                    self.touchEventViewArray[index].movementDirectionPoint = point
+                    
+                }
+                
+            }else {
+                self.touchEventViewArray[index].isHidden = true
+                
+            }
+        }
         
         
-//        if recognizedPointArray.count == 1 {
-//            self.touchStatus = 1
+            
+
+        
+//        var recordLeftHandPoint: CGPoint? = nil
+//        var recordRightHandPoint: CGPoint? = nil
 //
-//        }else if recognizedPointArray.count == 0 {
-//            self.Signage = true
+//        if let leftHandPoint = recognizedPointArray[0]{
+//            DispatchQueue.main.async {
+//                self.touchEventViewArray[0].movementDirectionPoint = leftHandPoint
 //
-//            return
+//            }
+//
+//            recordLeftHandPoint = leftHandPoint
 //
 //        }else {
-//            self.touchStatus = 2
+//            if self.prevRecognizedPointArray[0] == nil {
+//                recordLeftHandPoint = nil
+//
+//            }else {
+//                let tmpPoint = CGPoint.init(
+//                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
+//                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
+//                )
+//
+//                self.touchEventViewArray[0].movementDirectionPoint = tmpPoint
+//
+//                recordLeftHandPoint = tmpPoint
+//            }
 //
 //        }
-        self.touchStatus = 3
-        
-        var recordLeftHandPoint: CGPoint? = nil
-        var recordRightHandPoint: CGPoint? = nil
-        
-        if let leftHandPoint = recognizedPointArray[0]{
-            DispatchQueue.main.async {
-                self.touchEventViewArray[0].movementDirectionPoint = leftHandPoint
-                
-            }
-            
-            recordLeftHandPoint = leftHandPoint
-            
-        }else {
-            if self.prevRecognizedPointArray[0] == nil {
-                recordLeftHandPoint = nil
-                
-            }else {
-                let tmpPoint = CGPoint.init(
-                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
-                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
-                )
-                
-                self.touchEventViewArray[0].movementDirectionPoint = tmpPoint
-                
-                recordLeftHandPoint = tmpPoint
-            }
-            
-        }
-        
-        if let rightHandPoint = recognizedPointArray[1]{
-            DispatchQueue.main.async {
-                self.touchEventViewArray[1].movementDirectionPoint = rightHandPoint
-                
-            }
-            
-            recordRightHandPoint = rightHandPoint
-            
-        }else {
-            if self.prevRecognizedPointArray[1] == nil {
-                recordRightHandPoint = nil
-                
-            }else {
-                let tmpPoint = CGPoint.init(
-                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
-                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
-                )
-                
-                self.touchEventViewArray[1].movementDirectionPoint = tmpPoint
-                
-                recordRightHandPoint = tmpPoint
-            }
-            
-        }
-        
-        self.prevRecognizedPointArray = [recordLeftHandPoint, recordRightHandPoint]
+//
+//        if let rightHandPoint = recognizedPointArray[1]{
+//            DispatchQueue.main.async {
+//                self.touchEventViewArray[1].movementDirectionPoint = rightHandPoint
+//
+//            }
+//
+//            recordRightHandPoint = rightHandPoint
+//
+//        }else {
+//            if self.prevRecognizedPointArray[1] == nil {
+//                recordRightHandPoint = nil
+//
+//            }else {
+//                let tmpPoint = CGPoint.init(
+//                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
+//                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
+//                )
+//
+//                self.touchEventViewArray[1].movementDirectionPoint = tmpPoint
+//
+//                recordRightHandPoint = tmpPoint
+//            }
+//
+//        }
+//
+//        self.prevRecognizedPointArray = [recordLeftHandPoint, recordRightHandPoint]
         
         
         
