@@ -377,57 +377,7 @@ extension OperateKeysView {
             
             
         }
-        
-        
-        
-        
-        
     }
-    
-    
-    //        switch self.presentTouchArray.count {
-    //        case 1:
-    
-    //
-    //        default:
-    //
-    //
-    //        }
-    //    }
-    
-    //                if touchEventView.isHidden == false {
-    //
-    //                    let touchEventViewToTouch = ToolClass.getDistance(point1: touch.location(in: self), point2: touchEventView.frame.origin)
-    //
-    //                    if rootDistance > touchEventViewToTouch {
-    //                        rootDistance = touchEventViewToTouch
-    //
-    //                        touchEventView.touchAddress = touchAddress
-    //                        touchEventView.movementDirectionPoint = touch.location(in: self)
-    //                    }
-    //                }
-    
-    //            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
-    //
-    //            let isSameTouchAddress = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
-    //
-    //            if isSameTouchAddress != true {
-    //                let touchEventModel = MusicKeyTouchMessageModel.init(touchAddress: touchAddress, touchEventPoint: touch.location(in: self), lastTouchKey: pressedKey)
-    //
-    //                self.touchEventModelArray.append(touchEventModel)
-    //
-    //            }
-    //
-    //            // 如果点到按钮就触发通知
-    //            if pressedKey != nil {
-    //                pressedKey!.pressStatus = .Pressed
-    //
-    //                // 判断点击是否为上层按钮
-    //                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
-    //                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
-    //
-    //                }
-    //            }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
@@ -442,66 +392,6 @@ extension OperateKeysView {
                 }
                 
             }
-            
-            
-            
-            //            let previousPressedKey = self.lastTouchKeyDict[touchAddress]!
-            
-            // 上次点击的按钮
-            //            let previousPressedKey: BaseMusicKey? = self.getLastTouchKey(address: touchAddress)
-            //
-            //
-            //
-            //            // 本次点击的按钮
-            //            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
-            //
-            //
-            //            // 本次点击的按钮不为空
-            //            if pressedKey != nil {
-            //
-            //                // 判断点击是否为上层按钮
-            //                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
-            //                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
-            //
-            //                }
-            //
-            //
-            //                // 上次点击的按钮不为空
-            //                if previousPressedKey != nil {
-            //
-            //                    // 两次点击的按钮不一致
-            //                    if pressedKey!.mainKey != previousPressedKey!.mainKey {
-            //
-            //                        previousPressedKey!.pressStatus = .Unpressed
-            //
-            //
-            //                        // 判断是否从上层Key滑动到下层Key
-            //                        if self.judgeKeyIsMoved(fromHigherLevelKey: previousPressedKey!, toLowerLevelKey: pressedKey!) == false {
-            //
-            //                            pressedKey!.pressStatus = .Pressed
-            //                        }
-            //
-            //                    }
-            //
-            //                }else {
-            //                    pressedKey!.pressStatus = .Pressed
-            //
-            //                }
-            //
-            //
-            //
-            //            }else {
-            //                // 上次点击的按钮不为空
-            //                if previousPressedKey != nil {
-            //                    previousPressedKey!.pressStatus = .Unpressed
-            //
-            //                }
-            //            }
-            //
-            ////            self.lastTouchKeyDict[touchAddress]! = pressedKey
-            //
-            //            let _ = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
-            
         }
     }
     
@@ -712,29 +602,17 @@ extension OperateKeysView {
 
 extension OperateKeysView: TouchEventViewDelegate {
     func doWithDetermineTrack(oldPoint: CGPoint, newPoint: CGPoint) {
+        
         for musicKey in self.musicKeyArray {
+            
             let isPassed = ToolClass.judgeTwoPointsSegmentIsPassView(point1: oldPoint, point2: newPoint, view: musicKey)
             
-            if isPassed == true {
+            if isPassed == true && musicKey.frame.contains(oldPoint) == false {
                 musicKey.pressStatus = .Pressed
-                
-//                if musicKey.kind == .Movable {
-//                    UIView.animate(
-//                        withDuration: 0.25,
-//                        delay: 0,
-//                        options: [],
-//                        animations: {
-//                            musicKey.center = newPoint
-//                    },
-//                        completion: nil
-//                    )
-//                    
-//                    
-//                }
+
             }
+            
         }
-        
-        
         
     }
     
