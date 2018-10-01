@@ -822,23 +822,25 @@ extension OperateKeysView {
             
         default:
             for point in recognizedPointArray {
-                let distanceToFirst = ToolClass.getDistance(
-                    point1: self.touchEventViewArray[0].center,
-                    point2: point
-                )
-                
-                let distanceToSecond = ToolClass.getDistance(
-                    point1: self.touchEventViewArray[1].center,
-                    point2: point
-                )
-                
-                let touchEventDistanceModel = TouchEventRecordDistance.init(
-                    targetTouch: nil, targetPoint: point,
-                    distanceToFirstBall: distanceToFirst,
-                    distanceToSecondBall: distanceToSecond
-                )
-                
-                touchEventDistanceModelArray.append(touchEventDistanceModel)
+                DispatchQueue.main.async {
+                    let distanceToFirst = ToolClass.getDistance(
+                        point1: self.touchEventViewArray[0].center,
+                        point2: point
+                    )
+                    
+                    let distanceToSecond = ToolClass.getDistance(
+                        point1: self.touchEventViewArray[1].center,
+                        point2: point
+                    )
+                    
+                    let touchEventDistanceModel = TouchEventRecordDistance.init(
+                        targetTouch: nil, targetPoint: point,
+                        distanceToFirstBall: distanceToFirst,
+                        distanceToSecondBall: distanceToSecond
+                    )
+                    
+                    touchEventDistanceModelArray.append(touchEventDistanceModel)
+                }
             }
             
             if touchEventDistanceModelArray.count == 0 {

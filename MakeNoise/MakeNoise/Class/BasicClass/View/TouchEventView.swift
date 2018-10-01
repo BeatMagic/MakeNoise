@@ -18,7 +18,10 @@ class TouchEventView: UIView {
             DispatchQueue.main.async {
                 if self.frame.contains(self.movementDirectionPoint) == false {
                     
-                    self.bindingAnimation(duration: 0.25)
+                    // 得到需要运动的距离
+                    let needTravelDistance = ToolClass.getDistance(point1: self.center, point2: self.movementDirectionPoint)
+                    
+                    self.bindingAnimation(duration: Double.init(needTravelDistance / TouchEventViewSettingModel.unitSpeed))
                     
                 }
             }
