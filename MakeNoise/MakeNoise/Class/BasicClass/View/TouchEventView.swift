@@ -15,10 +15,12 @@ class TouchEventView: UIView {
     var movementDirectionPoint: CGPoint = CGPoint.init(x: ToolClass.getScreenWidth() / 2, y: ToolClass.getScreenHeight() / 2) {
         didSet {
             // 当这个点不在自身里才开始运动
-            if self.frame.contains(self.movementDirectionPoint) == false {
-                
-                self.bindingAnimation(duration: 0.25)
-                
+            DispatchQueue.main.async {
+                if self.frame.contains(self.movementDirectionPoint) == false {
+                    
+                    self.bindingAnimation(duration: 0.25)
+                    
+                }
             }
         }
     }

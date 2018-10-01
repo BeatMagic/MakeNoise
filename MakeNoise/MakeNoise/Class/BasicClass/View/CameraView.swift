@@ -715,11 +715,36 @@ extension CameraView {
         let doubleBuffer = UnsafeBufferPointer(start: doublePtr, count: length)
         let mm = Array(doubleBuffer)
         
-
         
         drawLine(mm)
         
 
+    }
+    
+    func setPos(_ mm: Array<Double>) {
+        let com = PoseEstimator(ImageWidth,ImageHeight)
+        
+        
+        let humans = com.estimate(mm);
+        
+        var pos = [CGPoint]()
+        for human in humans {
+            for i in [4,7] {
+                if human.bodyParts.keys.index(of: i) == nil {
+                    continue
+                }
+                let bodyPart = human.bodyParts[i]!
+                //centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
+                let pt = CGPoint(x: Int(bodyPart.x * CGFloat(ImageWidth) + 0.5), y: Int(bodyPart.y * CGFloat(ImageHeight) + 0.5))
+                pos.append(pt)
+            }
+            
+        }
+        print(pos)
+        
+        self.musicKeyboard.recognizedPointArray = pos
+    
+        
     }
 
     func drawLine(_ mm: Array<Double>) {
@@ -730,6 +755,7 @@ extension CameraView {
         
         var keypoint = [Int32]()
         var pos = [CGPoint]()
+        var posSet = [CGPoint]()
         for human in humans {
             var centers = [Int: CGPoint]()
             for i in 0...CocoPart.Background.rawValue {
@@ -739,6 +765,10 @@ extension CameraView {
                 let bodyPart = human.bodyParts[i]!
                 //centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
                 centers[i] = CGPoint(x: Int(bodyPart.x * CGFloat(ImageWidth) + 0.5), y: Int(bodyPart.y * CGFloat(ImageHeight) + 0.5))
+                
+                if i==4 || i==7{
+                    self.musicKeyboard.recognizedPointArray.append(centers[i]!)
+                }
             }
             
             for (pairOrder, (pair1,pair2)) in CocoPairsRender.enumerated() {
@@ -754,7 +784,9 @@ extension CameraView {
                 }
             }
         }
-        print(pos)
+        print(posSet)
+        
+//        self.musicKeyboard.recognizedPointArray = pos
         
         let targetImageSize = CGSize(width: ImageWidth, height: ImageWidth)
         

@@ -44,25 +44,28 @@ class OperateKeysView: UIView {
     
     private var touchStatus: Int = 0 {
         didSet {
-            switch touchStatus {
-            case 1:
-                self.touchEventViewArray[0].isHidden = false
-                
-            case 2:
-                self.touchEventViewArray[1].isHidden = false
-                
-            default:
-                self.touchEventViewArray[0].isHidden = true
-                self.touchEventViewArray[1].isHidden = true
-            }
             
+            DispatchQueue.main.async {
+                switch self.touchStatus {
+                    
+                case 1:
+                    self.touchEventViewArray[0].isHidden = false
+                    
+                case 2:
+                    self.touchEventViewArray[1].isHidden = false
+                    
+                default:
+                    self.touchEventViewArray[0].isHidden = true
+                    self.touchEventViewArray[1].isHidden = true
+                }
+            }
         }
     }
     
     /// 识别出来的点数组
     var recognizedPointArray: [CGPoint] = [] {
         didSet {
-            
+            self.didSetRecognizedPointArray()
         }
     }
     
@@ -762,7 +765,10 @@ extension OperateKeysView: TouchEventViewDelegate {
 extension OperateKeysView {
     func didSetRecognizedPointArray() -> Void {
         
-        self.isUserInteractionEnabled = false
+        DispatchQueue.main.async {
+            self.isUserInteractionEnabled = false
+        }
+        
         
         if self.recognizedPointArray.count == 1 {
             self.touchStatus = 1
@@ -780,28 +786,32 @@ extension OperateKeysView {
         case 1:
             let point = self.recognizedPointArray.first!
             
-            if self.touchEventViewArray[1].isHidden == true { // 屏幕上只有一个点直接吸附
-                let touchEventView = self.touchEventViewArray[0]
-                touchEventView.movementDirectionPoint = point
-                
-            }else { // 屏幕上有两个点 选择其中最近的吸附
-                var distanceArray: [CGFloat] = []
-                
-                for touchEventView in self.touchEventViewArray {
-                    let touchEventViewToTouch = ToolClass.getDistance(point1: point, point2: touchEventView.center)
+            DispatchQueue.main.async {
+                if self.touchEventViewArray[1].isHidden == true { // 屏幕上只有一个点直接吸附
+                    let touchEventView = self.touchEventViewArray[0]
+                    touchEventView.movementDirectionPoint = point
                     
-                    distanceArray.append(touchEventViewToTouch)
+                }else { // 屏幕上有两个点 选择其中最近的吸附
+                    var distanceArray: [CGFloat] = []
+                    
+                    for touchEventView in self.touchEventViewArray {
+                        let touchEventViewToTouch = ToolClass.getDistance(point1: point, point2: touchEventView.center)
+                        
+                        distanceArray.append(touchEventViewToTouch)
+                    }
+                    
+                    if distanceArray[0] < distanceArray[1] {
+                        self.touchEventViewArray[0].movementDirectionPoint = point
+                        
+                    }else {
+                        self.touchEventViewArray[1].movementDirectionPoint = point
+                        
+                    }
+                    
                 }
-                
-                if distanceArray[0] < distanceArray[1] {
-                    self.touchEventViewArray[0].movementDirectionPoint = point
-                    
-                }else {
-                    self.touchEventViewArray[1].movementDirectionPoint = point
-                    
-                }
-                
             }
+            
+            
             
             
             
@@ -810,41 +820,61 @@ extension OperateKeysView {
         default:
             for point in self.recognizedPointArray {
                 
-                let distanceToFirst = ToolClass.getDistance(
-                    point1: self.touchEventViewArray[0].center,
-                    point2: point
-                )
-                
-                let distanceToSecond = ToolClass.getDistance(
-                    point1: self.touchEventViewArray[1].center,
-                    point2: point
-                )
-                
-                let touchEventDistanceModel = TouchEventRecordDistance.init(
-                    targetTouch: nil, targetPoint: point,
-                    distanceToFirstBall: distanceToFirst,
-                    distanceToSecondBall: distanceToSecond
-                )
-                
-                self.touchEventDistanceModelArray.append(touchEventDistanceModel)
-            }
-            
-            self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
-                return modelA.distanceToFirstBall < modelB.distanceToFirstBall
-            }
-            
-            let nearestTouchModelToFirst = self.touchEventDistanceModelArray.first!
-
-            self.touchEventViewArray[0].movementDirectionPoint = nearestTouchModelToFirst.targetPoint!
-            
-            
-            if self.touchEventViewArray[1].isHidden == false {
-                self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
-                    return modelA.distanceToSecondBall < modelB.distanceToSecondBall
+                DispatchQueue.main.async {
+                    let distanceToFirst = ToolClass.getDistance(
+                        point1: self.touchEventViewArray[0].center,
+                        point2: point
+                    )
+                    
+                    let distanceToSecond = ToolClass.getDistance(
+                        point1: self.touchEventViewArray[1].center,
+                        point2: point
+                    )
+                    
+                    let touchEventDistanceModel = TouchEventRecordDistance.init(
+                        targetTouch: nil, targetPoint: point,
+                        distanceToFirstBall: distanceToFirst,
+                        distanceToSecondBall: distanceToSecond
+                    )
+                    
+                    self.touchEventDistanceModelArray.append(touchEventDistanceModel)
                 }
                 
-                let nearestTouchModelToSecond = self.touchEventDistanceModelArray.first!
-                self.touchEventViewArray[1].movementDirectionPoint = nearestTouchModelToSecond.targetPoint!
+            }
+            
+            
+            let queueGroupA = DispatchGroup.init()
+            let queueA = DispatchQueue.init(label: "tmpQueue")
+            
+            queueA.async(group: queueGroupA, execute: {
+                self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
+                    return modelA.distanceToFirstBall < modelB.distanceToFirstBall
+                }
+            })
+            
+            queueGroupA.notify(queue: DispatchQueue.main) {
+                let nearestTouchModelToFirst = self.touchEventDistanceModelArray[0]
+                
+                self.touchEventViewArray[0].movementDirectionPoint = nearestTouchModelToFirst.targetPoint!
+            }
+
+            if self.touchEventViewArray[1].isHidden == false {
+                
+                let queueGroupB = DispatchGroup.init()
+                let queueB = DispatchQueue.init(label: "tmpQueue")
+                queueB.async(group: queueGroupB, execute: {
+                    
+                    self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
+                        return modelA.distanceToSecondBall < modelB.distanceToSecondBall
+                    }
+                })
+                
+                queueGroupB.notify(queue: DispatchQueue.main) {
+                    let nearestTouchModelToSecond = self.touchEventDistanceModelArray.first!
+                    self.touchEventViewArray[1].movementDirectionPoint = nearestTouchModelToSecond.targetPoint!
+                }
+                
+
             }
             
             self.touchEventDistanceModelArray.removeAll()
