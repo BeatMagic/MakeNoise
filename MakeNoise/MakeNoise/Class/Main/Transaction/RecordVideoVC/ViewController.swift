@@ -104,7 +104,7 @@ extension ViewController {
         
         self.timbreMgr = TimbreManager()
         BeatTimer.delegate = self
-        MusicAttributesModel.BeatsCountInOneMinute = 90
+        MusicAttributesModel.BeatsCountInOneMinute = 480
     }
     
     

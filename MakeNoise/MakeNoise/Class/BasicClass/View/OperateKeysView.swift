@@ -744,9 +744,9 @@ extension OperateKeysView: TouchEventViewDelegate {
 extension OperateKeysView {
     func didSetRecognizedPointArray(_ recognizedPointArray: [CGPoint?]) -> Void {
         
-        DispatchQueue.main.async {
-            self.isUserInteractionEnabled = false
-        }
+//        DispatchQueue.main.async {
+//            self.isUserInteractionEnabled = false
+//        }
         
         for index in 0 ..< 17 {
             

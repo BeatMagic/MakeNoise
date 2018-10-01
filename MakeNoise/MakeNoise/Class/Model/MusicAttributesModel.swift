@@ -13,8 +13,8 @@ class MusicAttributesModel: NSObject {
     /// 一分钟的拍子数
     static var BeatsCountInOneMinute: Double = 60 {
         didSet {
-            let sectionTime = 4/(BeatsCountInOneMinute / 60)
-            let everyBeatTime = sectionTime / 16
+            let sectionTime = StandardBeatsCountInOneSection * (60 / BeatsCountInOneMinute)
+            let everyBeatTime = 60 / BeatsCountInOneMinute
 
             self.LocalEveryBeatTime = everyBeatTime
             BeatTimer.setBeatTimer(everyBeatTime: everyBeatTime, sectionTime: sectionTime)
@@ -22,10 +22,10 @@ class MusicAttributesModel: NSObject {
     }
     
     /// 标准: 一小节几个Beat
-    static var StandardBeatsCountInOneSection: Double = 4 {
+    static var StandardBeatsCountInOneSection: Double = 16 {
         didSet {
-            let sectionTime = BeatsCountInOneMinute / 60 * 4
-            let everyBeatTime = sectionTime / 16
+            let sectionTime = StandardBeatsCountInOneSection * (60 / BeatsCountInOneMinute)
+            let everyBeatTime = 60 / BeatsCountInOneMinute
             
             self.LocalEveryBeatTime = everyBeatTime
             BeatTimer.setBeatTimer(everyBeatTime: everyBeatTime, sectionTime: sectionTime)
@@ -33,15 +33,15 @@ class MusicAttributesModel: NSObject {
     }
     
     /// 本地设置: 一小节几个Beat
-    static var LocalBeatsCountInOneSection: Double = 16 {
-        didSet {
-            let sectionTime = BeatsCountInOneMinute / 60 * 4
-            let everyBeatTime = sectionTime / 16
-            
-            self.LocalEveryBeatTime = everyBeatTime
-            BeatTimer.setBeatTimer(everyBeatTime: everyBeatTime, sectionTime: sectionTime)
-        }
-    }
+//    static var LocalBeatsCountInOneSection: Double = 16 {
+//        didSet {
+//            let sectionTime = BeatsCountInOneMinute / 60 * 4
+//            let everyBeatTime = sectionTime / 16
+//
+//            self.LocalEveryBeatTime = everyBeatTime
+//            BeatTimer.setBeatTimer(everyBeatTime: everyBeatTime, sectionTime: sectionTime)
+//        }
+//    }
     
     /// 每个Beat多长时间
     static var LocalEveryBeatTime: Double = 4 / 16
