@@ -716,7 +716,7 @@ extension CameraView {
         let mm = Array(doubleBuffer)
         
         
-        setPos(mm)
+        drawLine(mm)
         
 
     }
@@ -763,18 +763,16 @@ extension CameraView {
             var centers = [Int: CGPoint]()
             for i in 0...CocoPart.Background.rawValue {
                 if human.bodyParts.keys.index(of: i) == nil {
-                    if i==4 || i==7{
-                        posSet.append(nil)
-                    }
+                    posSet.append(nil)
                     continue
                 }
                 let bodyPart = human.bodyParts[i]!
-                //centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
-                centers[i] = CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5))
+                centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
+                //centers[i] = CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5))
                 
-                if i==4 || i==7{
-                    posSet.append(centers[i]!)
-                }
+                
+                posSet.append(CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5)))
+                
             }
             
             for (pairOrder, (pair1,pair2)) in CocoPairsRender.enumerated() {
@@ -799,31 +797,13 @@ extension CameraView {
         }
         
         
-        
-        let targetImageSize = CGSize(width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight())
-        
-        //UIGraphicsBeginImageContext(targetImageSize)
-        let scale: CGFloat = 0
-        UIGraphicsBeginImageContextWithOptions(targetImageSize, false, scale)
-        var context:CGContext = UIGraphicsGetCurrentContext()!
-        
-        for i in 0..<pos.count {
-            if i%2 == 0 {
-                let center1 = pos[i]
-                let center2 = pos[i+1]
-                
-                let color = UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
-                
-                addLine(context: &context, fromPoint: center1, toPoint: center2, color: color)
-            }
-        }
-        
-        var boneImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-
-        
         DispatchQueue.main.async {
-            self.imageView.image = boneImage
+            let opencv = OpenCVWrapper()
+            
+            let cv_size = CGRect(x: 0, y: 0, width: self.ImageWidth, height: self.ImageHeight)
+            let uiImage = opencv.renderKeyPoint(cv_size, keypoint: &keypoint, keypoint_size: Int32(keypoint.count), pos: &pos)
+            
+            self.imageView.image = uiImage?.resize(to: CGSize(width: ToolClass.getScreenWidth(),height:ToolClass.getScreenHeight()))
         }
         
     }
