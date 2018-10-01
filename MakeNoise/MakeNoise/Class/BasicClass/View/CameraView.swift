@@ -729,7 +729,7 @@ extension CameraView {
         
         var pos = [CGPoint?]()
         for human in humans {
-            for i in [4,7] {
+            for i in 0..<CocoPart.Background.rawValue {
                 if human.bodyParts.keys.index(of: i) == nil {
                     pos.append(nil)
                     continue
