@@ -81,7 +81,7 @@ class MusicMessageProcessing: NSObject {
         let toneFileNoSuffixName = ToolClass.cutStringWithPlaces(toneFileName, startPlace: 0, endPlace: toneFileName.count - 4)
         
         
-        if let range = toneFileName.range(of: "_") {
+        if let range = toneFileName.range(of: "_", options: .backwards, range: nil, locale: nil) {
             // 获取音符字符串
             let noteString = ToolClass.cutStringWithPlaces(toneFileNoSuffixName, startPlace: range.upperBound.encodedOffset, endPlace: toneFileNoSuffixName.count)
             

@@ -42,9 +42,14 @@ class BaseMusicKey: UIView {
         didSet {
             var eventType = KeyTouchEvent.TouchEventType.Exit
             if pressStatus == .Pressed {
-                self.shake()
-                eventType = KeyTouchEvent.TouchEventType.Enter
                 
+                let color = self.backgroundColor
+                self.backgroundColor = UIColor.flatWhite
+                
+                self.shake()
+                
+                eventType = KeyTouchEvent.TouchEventType.Enter
+                self.backgroundColor = color
                 
             }else if pressStatus == .Unpressed && self.kind == MusicKeyAttributesModel.KeyKinds.Movable {
                 

@@ -111,10 +111,6 @@ extension TouchEventView {
     /// 绑定动画
     func bindingAnimation(duration: TimeInterval) -> Void {
         
-        
-        
-        
-        
         UIView.animate(
             withDuration: duration,
             delay: 0,

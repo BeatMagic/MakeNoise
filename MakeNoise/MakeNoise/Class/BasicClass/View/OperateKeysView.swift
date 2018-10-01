@@ -66,12 +66,8 @@ class OperateKeysView: UIView {
         }
     }
     
-    /// 识别出来的点数组
-//    var recognizedPointArray: [CGPoint] = [] {
-//        didSet {
-//            self.didSetRecognizedPointArray()
-//        }
-//    }
+    /// 上次识别出来的点数组
+    private var prevRecognizedPointArray: [CGPoint?] = [nil, nil]
     
     /// 可以穿参数标识
     var Signage: Bool = true
@@ -746,19 +742,19 @@ extension OperateKeysView: TouchEventViewDelegate {
             if isPassed == true {
                 musicKey.pressStatus = .Pressed
                 
-                if musicKey.kind == .Movable {
-                    UIView.animate(
-                        withDuration: 0.25,
-                        delay: 0,
-                        options: [],
-                        animations: {
-                            musicKey.center = newPoint
-                    },
-                        completion: nil
-                    )
-                    
-                    
-                }
+//                if musicKey.kind == .Movable {
+//                    UIView.animate(
+//                        withDuration: 0.25,
+//                        delay: 0,
+//                        options: [],
+//                        animations: {
+//                            musicKey.center = newPoint
+//                    },
+//                        completion: nil
+//                    )
+//                    
+//                    
+//                }
             }
         }
         
@@ -771,12 +767,10 @@ extension OperateKeysView: TouchEventViewDelegate {
 // MARK: - 外部赋值之后
 extension OperateKeysView {
     func didSetRecognizedPointArray(_ recognizedPointArray: [CGPoint?]) -> Void {
-
+            
         DispatchQueue.main.async {
             self.isUserInteractionEnabled = false
         }
-        
-        self
         
 //        self.touchEventDistanceModelArray.removeAll()
 //        var touchEventDistanceModelArray = self.touchEventDistanceModelArray
@@ -796,10 +790,30 @@ extension OperateKeysView {
 //        }
         self.touchStatus = 3
         
+        var recordLeftHandPoint: CGPoint? = nil
+        var recordRightHandPoint: CGPoint? = nil
+        
         if let leftHandPoint = recognizedPointArray[0]{
             DispatchQueue.main.async {
                 self.touchEventViewArray[0].movementDirectionPoint = leftHandPoint
                 
+            }
+            
+            recordLeftHandPoint = leftHandPoint
+            
+        }else {
+            if self.prevRecognizedPointArray[0] == nil {
+                recordLeftHandPoint = nil
+                
+            }else {
+                let tmpPoint = CGPoint.init(
+                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
+                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
+                )
+                
+                self.touchEventViewArray[0].movementDirectionPoint = tmpPoint
+                
+                recordLeftHandPoint = tmpPoint
             }
             
         }
@@ -810,7 +824,26 @@ extension OperateKeysView {
                 
             }
             
+            recordRightHandPoint = rightHandPoint
+            
+        }else {
+            if self.prevRecognizedPointArray[1] == nil {
+                recordRightHandPoint = nil
+                
+            }else {
+                let tmpPoint = CGPoint.init(
+                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
+                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
+                )
+                
+                self.touchEventViewArray[1].movementDirectionPoint = tmpPoint
+                
+                recordRightHandPoint = tmpPoint
+            }
+            
         }
+        
+        self.prevRecognizedPointArray = [recordLeftHandPoint, recordRightHandPoint]
         
         
         

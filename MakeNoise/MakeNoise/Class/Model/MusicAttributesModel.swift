@@ -50,48 +50,48 @@ class MusicAttributesModel: NSObject {
     /// 音色文件名数组 [[音色文件名]] (按照按钮排列)
     static let toneFileWithKeyArray: [[[String]]] = [
         [
-            ["Kick+HH_C1.wav"],
+            ["0st_01_C1.wav", "0st_02_B2.wav"],
             [],
         ],
         [
-            ["pad_D1.wav"],
+            ["1st_01_A1.wav"],
             [],
         ],
         [
-            ["pluck1_E1.wav"],
+            ["2st_01_D1.wav"],
             [],
         ],
         [
-            ["pluck2_F1.wav"],
+            ["3st_01_E1.wav"],
             [],
         ],
         [
-            ["HH_C2.wav"],
+            ["4st_01_F1.wav"],
             [],
         ],
         
         [
-            ["pluck3_G1.wav", "pluck4_A1.wav", "pluck5_B1.wav"],
+            ["5st_01_G1.wav"],
             [],
         ],
         [
-            ["clap_D2.wav"],
+            ["6st_01_B1.wav", "6st_02_C2.wav", "6st_02_G2.wav"],
             [],
         ],
         [
-            ["pluck4_A1.wav"],
+            ["7st_01_C2.wav", "7st_02_B1.wav" ],
             [],
         ],
         [
-            ["snare_F2.wav"],
+            ["8st_01_D2.wav", "8st_02_G2.wav", "8st_03_E2.wav"],
             [],
         ],
         [
-            ["pluck5_B1.wav"],
+            ["9st_01_E2.wav", "9st_02_G2.wav"],
             [],
         ],
         [
-            ["shake_E2.wav"],
+            ["10st_01_F2.wav", "10st_02_A2.wav", "10st_03_G2.wav"],
             [],
         ],
     ]
