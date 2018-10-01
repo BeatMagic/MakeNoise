@@ -755,16 +755,19 @@ extension CameraView {
         
         var keypoint = [Int32]()
         var pos = [CGPoint]()
-        var posSet = [CGPoint]()
+        var posSet = [CGPoint?]()
         for human in humans {
             var centers = [Int: CGPoint]()
             for i in 0...CocoPart.Background.rawValue {
                 if human.bodyParts.keys.index(of: i) == nil {
+                    if i==4 || i==7{
+                        posSet.append(nil)
+                    }
                     continue
                 }
                 let bodyPart = human.bodyParts[i]!
                 //centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
-                centers[i] = CGPoint(x: Int(bodyPart.x * CGFloat(ImageWidth) + 0.5), y: Int(bodyPart.y * CGFloat(ImageHeight) + 0.5))
+                centers[i] = CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5))
                 
                 if i==4 || i==7{
                     posSet.append(centers[i]!)
@@ -794,7 +797,7 @@ extension CameraView {
         
         
         
-        let targetImageSize = CGSize(width: ImageWidth, height: ImageWidth)
+        let targetImageSize = CGSize(width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight())
         
         //UIGraphicsBeginImageContext(targetImageSize)
         let scale: CGFloat = 0
@@ -814,9 +817,9 @@ extension CameraView {
         
         var boneImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
-        if pos.count>0{
-            boneImage = boneImage.resize(to: CGSize(width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight()))
-        }
+//        if pos.count>0{
+//            boneImage = boneImage.resize(to: CGSize(width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight()))
+//        }
         
         DispatchQueue.main.async {
             self.imageView.image = boneImage
