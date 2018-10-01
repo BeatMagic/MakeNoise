@@ -750,15 +750,18 @@ extension OperateKeysView {
         
         for index in 0 ..< 17 {
             
-            if let point = recognizedPointArray[index] {
-                DispatchQueue.main.async {
-                    self.touchEventViewArray[index].isHidden = false
+            DispatchQueue.main.async {
+                
+                if let point = recognizedPointArray[index] {
+                    
+//                    self.touchEventViewArray[index].isHidden = false
                     self.touchEventViewArray[index].movementDirectionPoint = point
                     
                 }
-                
-            }else {
-                self.touchEventViewArray[index].isHidden = true
+//                else {
+//                    self.touchEventViewArray[index].isHidden = true
+//
+//                }
                 
             }
         }
