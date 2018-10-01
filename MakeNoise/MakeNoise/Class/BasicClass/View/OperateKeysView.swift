@@ -11,25 +11,21 @@ import ChameleonFramework
 
 class OperateKeysView: UIView {
     /// 按钮数组
-    var musicKeyArray: [BaseMusicKey] = []
+    private var musicKeyArray: [BaseMusicKey] = []
     
     /// 按钮frame数组
-    var musicKeyViewModelArray: [MusicKeyViewModel] = []
-
-    /// touch事件模型的数组 (最多两个)
-    var touchEventModelArray : [MusicKeyTouchMessageModel] = [] {
-        didSet {
-            if touchEventModelArray.count > 2 {
-                for needRemoveIndex in 0 ..< touchEventModelArray.count - 2 {
-                    touchEventModelArray.remove(at: needRemoveIndex)
-                }
-            }
-            
-        }
-    }
+    private var musicKeyViewModelArray: [MusicKeyViewModel] = []
+    
+    /// 运动轨迹模型
+    private var touchEventDistanceModelArray: [TouchEventRecordDistance] = []
+    
+    
+    /// 正在进行的touch对象数组
+    private var presentTouchArray: [UITouch] = []
+    
     
     /// 模拟Touch点的UIView数组
-    let touchEventViewArray: [TouchEventView] = {
+    private let touchEventViewArray: [TouchEventView] = {
         var tmpArray: [TouchEventView] = []
         for index in 0 ..< 2 {
             let touchEventView = TouchEventView.init(
@@ -46,7 +42,7 @@ class OperateKeysView: UIView {
         return tmpArray
     }()
     
-    var touchStatus: Int = 0 {
+    private var touchStatus: Int = 0 {
         didSet {
             switch touchStatus {
             case 1:
@@ -62,7 +58,13 @@ class OperateKeysView: UIView {
             
         }
     }
-
+    
+    /// 识别出来的点数组
+    var recognizedPointArray: [CGPoint] = [] {
+        didSet {
+            
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -174,17 +176,17 @@ extension OperateKeysView {
                                                  height: generalHeight)
                 
             }
-
+            
         }
-
+        
     }
     
     /// setUI
     func setUI() -> Void {
         self.backgroundColor = UIColor.black
         self.isMultipleTouchEnabled = true
+        self.isUserInteractionEnabled = true
         
-
         
         var viewModelIndex = 0
         
@@ -200,7 +202,7 @@ extension OperateKeysView {
                 let model = ToneItemModel.init(toneFileName: fileName)
                 tomeModelArray.append(model)
             }
-
+            
             if viewModel.ownKind == .Movable {
                 
                 musicKey = BaseMovableMusicKey.init(
@@ -212,7 +214,7 @@ extension OperateKeysView {
                 )
                 
             }else {
-
+                
                 musicKey = BaseMusicKey.init(
                     frame: viewModel.ownFrame,
                     mainKey: viewModelIndex,
@@ -222,17 +224,17 @@ extension OperateKeysView {
                 )
                 
             }
-
+            
             switch viewModel.ownKind {
             case .Movable?:
                 musicKey.borderColor = UIColor.clear
                 musicKey.backgroundColor = UIColor.flatOrange
                 
-//                let panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(self.draggedView(_:)))
-//                panGesture.cancelsTouchesInView = false
-//                panGesture.delaysTouchesBegan = false
-//                panGesture.delaysTouchesEnded = false
-//                musicKey.addGestureRecognizer(panGesture)
+                //                let panGesture = UIPanGestureRecognizer.init(target: self, action: #selector(self.draggedView(_:)))
+                //                panGesture.cancelsTouchesInView = false
+                //                panGesture.delaysTouchesBegan = false
+                //                panGesture.delaysTouchesEnded = false
+                //                musicKey.addGestureRecognizer(panGesture)
                 
                 
             case .BorderVariable?:
@@ -245,7 +247,7 @@ extension OperateKeysView {
             self.addSubview(musicKey)
             self.musicKeyArray.append(musicKey)
             
-
+            
             
             viewModelIndex += 1
         }
@@ -268,23 +270,23 @@ extension OperateKeysView {
 
 // MARK: - 拖动等动作事件
 extension OperateKeysView {
-//    @objc func draggedView(_ sender: UIPanGestureRecognizer){
-//        let keyDrag = self.musicKeyArray[1] as! BaseMovableMusicKey
-//        self.bringSubview(toFront: keyDrag)
-//
-//        switch sender.state {
-//        case .began:
-//            keyDrag.ownCenter = keyDrag.center
-//
-//        case .ended, .failed, .cancelled:
-//            keyDrag.center = keyDrag.ownCenter
-//
-//        default:
-//            let location = sender.location(in: self)
-//            keyDrag.center = location
-//        }
-//
-//    }
+    //    @objc func draggedView(_ sender: UIPanGestureRecognizer){
+    //        let keyDrag = self.musicKeyArray[1] as! BaseMovableMusicKey
+    //        self.bringSubview(toFront: keyDrag)
+    //
+    //        switch sender.state {
+    //        case .began:
+    //            keyDrag.ownCenter = keyDrag.center
+    //
+    //        case .ended, .failed, .cancelled:
+    //            keyDrag.center = keyDrag.ownCenter
+    //
+    //        default:
+    //            let location = sender.location(in: self)
+    //            keyDrag.center = location
+    //        }
+    //
+    //    }
     
     
 }
@@ -292,9 +294,19 @@ extension OperateKeysView {
 // MARK: - 重载Touch事件
 extension OperateKeysView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
+        //        super.touchesBegan(touches, with: event)
         
-        if touches.count == 1 {
+        for touch in touches {
+            if self.presentTouchArray.contains(touch) == false {
+                self.presentTouchArray.append(touch)
+                
+            }
+            
+        }
+        
+        
+        
+        if self.presentTouchArray.count == 1 {
             self.touchStatus = 1
             
         }else {
@@ -303,55 +315,139 @@ extension OperateKeysView {
         }
         
         
-        for touch in touches {
-            
+        switch self.presentTouchArray.count {
+        case 1:
+            let touch = presentTouchArray.first!
             let touchAddress = String(format: "%p",  touch)
             
-            var rootDistance: CGFloat = 1000
-            for touchEventView in touchEventViewArray {
-                if touchEventView.isHidden == false {
+            if self.touchEventViewArray[1].isHidden == true { // 屏幕上只有一个点直接吸附
+                let touchEventView = self.touchEventViewArray[0]
+                touchEventView.touchAddress = touchAddress
+                touchEventView.movementDirectionPoint = touch.location(in: self)
+                
+            }else { // 屏幕上有两个点 选择其中最近的吸附
+                var distanceArray: [CGFloat] = []
+                
+                for touchEventView in self.touchEventViewArray {
+                    let touchEventViewToTouch = ToolClass.getDistance(point1: touch.location(in: self), point2: touchEventView.center)
                     
-                    let touchEventViewToTouch = ToolClass.getDistance(point1: touch.location(in: self), point2: touchEventView.frame.origin)
+                    distanceArray.append(touchEventViewToTouch)
+                }
+                
+                if distanceArray[0] < distanceArray[1] {
+                    self.touchEventViewArray[0].touchAddress = touchAddress
+                    self.touchEventViewArray[0].movementDirectionPoint = touch.location(in: self)
                     
-                    if rootDistance > touchEventViewToTouch {
-                        rootDistance = touchEventViewToTouch
-                        
-                        touchEventView.touchAddress = touchAddress
-                        touchEventView.movementDirectionPoint = touch.location(in: self)
-                    }
+                }else {
+                    self.touchEventViewArray[1].touchAddress = touchAddress
+                    self.touchEventViewArray[1].movementDirectionPoint = touch.location(in: self)
                     
                 }
                 
             }
             
             
-//            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
-//
-//            let isSameTouchAddress = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
-//
-//            if isSameTouchAddress != true {
-//                let touchEventModel = MusicKeyTouchMessageModel.init(touchAddress: touchAddress, touchEventPoint: touch.location(in: self), lastTouchKey: pressedKey)
-//
-//                self.touchEventModelArray.append(touchEventModel)
-//
-//            }
-//
-//            // 如果点到按钮就触发通知
-//            if pressedKey != nil {
-//                pressedKey!.pressStatus = .Pressed
-//
-//                // 判断点击是否为上层按钮
-//                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
-//                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
-//
-//                }
-//            }
+            
+            
+            
+        default:
+            for touch in self.presentTouchArray {
+                
+                let distanceToFirst = ToolClass.getDistance(
+                    point1: self.touchEventViewArray[0].center,
+                    point2: touch.location(in: self)
+                )
+                
+                let distanceToSecond = ToolClass.getDistance(
+                    point1: self.touchEventViewArray[1].center,
+                    point2: touch.location(in: self)
+                )
+                
+                let touchEventDistanceModel = TouchEventRecordDistance.init(
+                    targetTouch: touch, targetPoint: nil,
+                    distanceToFirstBall: distanceToFirst,
+                    distanceToSecondBall: distanceToSecond
+                )
+                
+                self.touchEventDistanceModelArray.append(touchEventDistanceModel)
+            }
+            
+            self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
+                return modelA.distanceToFirstBall < modelB.distanceToFirstBall
+            }
+            
+            let nearestTouchModelToFirst = self.touchEventDistanceModelArray.first!
+            self.touchEventViewArray[0].touchAddress = String(format: "%p",  nearestTouchModelToFirst.targetTouch!)
+            self.touchEventViewArray[0].movementDirectionPoint = nearestTouchModelToFirst.targetTouch!.location(in: self)
+            
+            
+            if self.touchEventViewArray[1].isHidden == false {
+                self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
+                    return modelA.distanceToSecondBall < modelB.distanceToSecondBall
+                }
+                
+                let nearestTouchModelToSecond = self.touchEventDistanceModelArray.first!
+                self.touchEventViewArray[1].touchAddress = String(format: "%p",  nearestTouchModelToSecond.targetTouch!)
+                self.touchEventViewArray[1].movementDirectionPoint = nearestTouchModelToSecond.targetTouch!.location(in: self)
+            }
+            
+            self.touchEventDistanceModelArray.removeAll()
+            
+            
         }
+        
+        
+        
+        
         
     }
     
+    
+    //        switch self.presentTouchArray.count {
+    //        case 1:
+    
+    //
+    //        default:
+    //
+    //
+    //        }
+    //    }
+    
+    //                if touchEventView.isHidden == false {
+    //
+    //                    let touchEventViewToTouch = ToolClass.getDistance(point1: touch.location(in: self), point2: touchEventView.frame.origin)
+    //
+    //                    if rootDistance > touchEventViewToTouch {
+    //                        rootDistance = touchEventViewToTouch
+    //
+    //                        touchEventView.touchAddress = touchAddress
+    //                        touchEventView.movementDirectionPoint = touch.location(in: self)
+    //                    }
+    //                }
+    
+    //            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
+    //
+    //            let isSameTouchAddress = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
+    //
+    //            if isSameTouchAddress != true {
+    //                let touchEventModel = MusicKeyTouchMessageModel.init(touchAddress: touchAddress, touchEventPoint: touch.location(in: self), lastTouchKey: pressedKey)
+    //
+    //                self.touchEventModelArray.append(touchEventModel)
+    //
+    //            }
+    //
+    //            // 如果点到按钮就触发通知
+    //            if pressedKey != nil {
+    //                pressedKey!.pressStatus = .Pressed
+    //
+    //                // 判断点击是否为上层按钮
+    //                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
+    //                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
+    //
+    //                }
+    //            }
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesMoved(touches, with: event)
         
         for touch in touches {
             let touchAddress = String(format: "%p",  touch)
@@ -367,72 +463,120 @@ extension OperateKeysView {
             
             
             
-//            let previousPressedKey = self.lastTouchKeyDict[touchAddress]!
+            //            let previousPressedKey = self.lastTouchKeyDict[touchAddress]!
             
             // 上次点击的按钮
-//            let previousPressedKey: BaseMusicKey? = self.getLastTouchKey(address: touchAddress)
-//
-//
-//
-//            // 本次点击的按钮
-//            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
-//
-//
-//            // 本次点击的按钮不为空
-//            if pressedKey != nil {
-//
-//                // 判断点击是否为上层按钮
-//                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
-//                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
-//
-//                }
-//
-//
-//                // 上次点击的按钮不为空
-//                if previousPressedKey != nil {
-//
-//                    // 两次点击的按钮不一致
-//                    if pressedKey!.mainKey != previousPressedKey!.mainKey {
-//
-//                        previousPressedKey!.pressStatus = .Unpressed
-//
-//
-//                        // 判断是否从上层Key滑动到下层Key
-//                        if self.judgeKeyIsMoved(fromHigherLevelKey: previousPressedKey!, toLowerLevelKey: pressedKey!) == false {
-//
-//                            pressedKey!.pressStatus = .Pressed
-//                        }
-//
-//                    }
-//
-//                }else {
-//                    pressedKey!.pressStatus = .Pressed
-//
-//                }
-//
-//
-//
-//            }else {
-//                // 上次点击的按钮不为空
-//                if previousPressedKey != nil {
-//                    previousPressedKey!.pressStatus = .Unpressed
-//
-//                }
-//            }
-//
-////            self.lastTouchKeyDict[touchAddress]! = pressedKey
-//
-//            let _ = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
+            //            let previousPressedKey: BaseMusicKey? = self.getLastTouchKey(address: touchAddress)
+            //
+            //
+            //
+            //            // 本次点击的按钮
+            //            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
+            //
+            //
+            //            // 本次点击的按钮不为空
+            //            if pressedKey != nil {
+            //
+            //                // 判断点击是否为上层按钮
+            //                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
+            //                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
+            //
+            //                }
+            //
+            //
+            //                // 上次点击的按钮不为空
+            //                if previousPressedKey != nil {
+            //
+            //                    // 两次点击的按钮不一致
+            //                    if pressedKey!.mainKey != previousPressedKey!.mainKey {
+            //
+            //                        previousPressedKey!.pressStatus = .Unpressed
+            //
+            //
+            //                        // 判断是否从上层Key滑动到下层Key
+            //                        if self.judgeKeyIsMoved(fromHigherLevelKey: previousPressedKey!, toLowerLevelKey: pressedKey!) == false {
+            //
+            //                            pressedKey!.pressStatus = .Pressed
+            //                        }
+            //
+            //                    }
+            //
+            //                }else {
+            //                    pressedKey!.pressStatus = .Pressed
+            //
+            //                }
+            //
+            //
+            //
+            //            }else {
+            //                // 上次点击的按钮不为空
+            //                if previousPressedKey != nil {
+            //                    previousPressedKey!.pressStatus = .Unpressed
+            //
+            //                }
+            //            }
+            //
+            ////            self.lastTouchKeyDict[touchAddress]! = pressedKey
+            //
+            //            let _ = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
             
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
         
         for touch in touches {
-
+            
             let touchAddress = String(format: "%p",  touch)
+            
+            for touchEventView in touchEventViewArray {
+                if touchEventView.touchAddress == touchAddress {
+                    touchEventView.touchAddress = ""
+                    
+                }
+                
+            }
+            
+            if self.presentTouchArray.contains(touch) == true {
+                
+                var index = 0
+                for recordTouch in self.presentTouchArray {
+                    let recordTouchAddress = String(format: "%p",  recordTouch)
+                    
+                    if recordTouchAddress == touchAddress {
+                        self.presentTouchArray.remove(at: index)
+                        
+                    }
+                    
+                    index += 1
+                }
+                
+            }
+            
+            //            let lastKey = self.lastTouchKeyDict[touchAddress]!
+            //            let lastKey = self.getLastTouchKey(address: touchAddress)
+            //
+            //            if lastKey != nil {
+            //                lastKey!.pressStatus = .Unpressed
+            //
+            //            }
+            
+            //            self.lastTouchKeyDict.removeValue(forKey: touchAddress)
+            
+        }
+        
+        self.resetMovableMusicKeyLocation()
+        
+        
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        
+        for touch in touches {
+            
+            let touchAddress = String(format: "%p",  touch)
+            
             
             for touchEventView in touchEventViewArray {
                 if touchEventView.touchAddress == touchAddress {
@@ -441,39 +585,19 @@ extension OperateKeysView {
                     
                 }
                 
-            }
-            
-            
-//            let lastKey = self.lastTouchKeyDict[touchAddress]!
-//            let lastKey = self.getLastTouchKey(address: touchAddress)
-//
-//            if lastKey != nil {
-//                lastKey!.pressStatus = .Unpressed
-//
-//            }
-
-//            self.lastTouchKeyDict.removeValue(forKey: touchAddress)
-
-        }
-        
-        self.resetMovableMusicKeyLocation()
-        
-        
-
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesCancelled(touches, with: event)
-        
-        for touch in touches {
-            
-            let touchAddress = String(format: "%p",  touch)
-            
-            
-            for touchEventView in touchEventViewArray {
-                if touchEventView.touchAddress == touchAddress {
-                    touchEventView.touchAddress = ""
+                if self.presentTouchArray.contains(touch) == true {
                     
+                    var index = 0
+                    for recordTouch in self.presentTouchArray {
+                        let recordTouchAddress = String(format: "%p",  recordTouch)
+                        
+                        if recordTouchAddress == touchAddress {
+                            self.presentTouchArray.remove(at: index)
+                            
+                        }
+                        
+                        index += 1
+                    }
                     
                 }
                 
@@ -481,18 +605,18 @@ extension OperateKeysView {
             
             
             //            let lastKey = self.lastTouchKeyDict[touchAddress]!
-//            let lastKey = self.getLastTouchKey(address: touchAddress)
-//
-//            if lastKey != nil {
-//                lastKey!.pressStatus = .Unpressed
-//
-//            }
+            //            let lastKey = self.getLastTouchKey(address: touchAddress)
+            //
+            //            if lastKey != nil {
+            //                lastKey!.pressStatus = .Unpressed
+            //
+            //            }
             
             //            self.lastTouchKeyDict.removeValue(forKey: touchAddress)
             
         }
         
-
+        
         self.resetMovableMusicKeyLocation()
     }
 }
@@ -523,32 +647,32 @@ extension OperateKeysView {
     
     
     /// 遍历touch事件模型 并比对touch是否为同一条轨迹
-    private func judgeTouchAddress(address: String, key: BaseMusicKey?) -> Bool {
-        for model in self.touchEventModelArray {
-            if model.touchAddress == address {
-                model.lastTouchKey = key
-                
-                return true
-            }
-            
-        }
-        
-        return false
-    }
-    
+    //    private func judgeTouchAddress(address: String, key: BaseMusicKey?) -> Bool {
+    //        for model in self.touchEventModelArray {
+    //            if model.touchAddress == address {
+    //                model.lastTouchKey = key
+    //
+    //                return true
+    //            }
+    //
+    //        }
+    //
+    //        return false
+    //    }
+    //
     /// 通过touch地址返回最后一个点击的音乐键
-    func getLastTouchKey(address: String) -> BaseMusicKey? {
-        for model in self.touchEventModelArray {
-            if model.touchAddress == address {
-                
-                return model.lastTouchKey
-                
-            }
-            
-        }
-        
-        return nil
-    }
+    //    func getLastTouchKey(address: String) -> BaseMusicKey? {
+    //        for model in self.touchEventModelArray {
+    //            if model.touchAddress == address {
+    //
+    //                return model.lastTouchKey
+    //
+    //            }
+    //
+    //        }
+    //
+    //        return nil
+    //    }
     
     
     
@@ -634,8 +758,99 @@ extension OperateKeysView: TouchEventViewDelegate {
     
 }
 
-// MARK: - 创建固定成员统一集合
+// MARK: - 外部赋值之后
 extension OperateKeysView {
-    
+    func didSetRecognizedPointArray() -> Void {
+        
+        self.isUserInteractionEnabled = false
+        
+        if self.recognizedPointArray.count == 1 {
+            self.touchStatus = 1
+            
+        }else if self.recognizedPointArray.count == 0 {
+            return
+            
+        }else {
+            self.touchStatus = 2
+            
+        }
+        
+        
+        switch self.recognizedPointArray.count {
+        case 1:
+            let point = self.recognizedPointArray.first!
+            
+            if self.touchEventViewArray[1].isHidden == true { // 屏幕上只有一个点直接吸附
+                let touchEventView = self.touchEventViewArray[0]
+                touchEventView.movementDirectionPoint = point
+                
+            }else { // 屏幕上有两个点 选择其中最近的吸附
+                var distanceArray: [CGFloat] = []
+                
+                for touchEventView in self.touchEventViewArray {
+                    let touchEventViewToTouch = ToolClass.getDistance(point1: point, point2: touchEventView.center)
+                    
+                    distanceArray.append(touchEventViewToTouch)
+                }
+                
+                if distanceArray[0] < distanceArray[1] {
+                    self.touchEventViewArray[0].movementDirectionPoint = point
+                    
+                }else {
+                    self.touchEventViewArray[1].movementDirectionPoint = point
+                    
+                }
+                
+            }
+            
+            
+            
+            
+            
+        default:
+            for point in self.recognizedPointArray {
+                
+                let distanceToFirst = ToolClass.getDistance(
+                    point1: self.touchEventViewArray[0].center,
+                    point2: point
+                )
+                
+                let distanceToSecond = ToolClass.getDistance(
+                    point1: self.touchEventViewArray[1].center,
+                    point2: point
+                )
+                
+                let touchEventDistanceModel = TouchEventRecordDistance.init(
+                    targetTouch: nil, targetPoint: point,
+                    distanceToFirstBall: distanceToFirst,
+                    distanceToSecondBall: distanceToSecond
+                )
+                
+                self.touchEventDistanceModelArray.append(touchEventDistanceModel)
+            }
+            
+            self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
+                return modelA.distanceToFirstBall < modelB.distanceToFirstBall
+            }
+            
+            let nearestTouchModelToFirst = self.touchEventDistanceModelArray.first!
+
+            self.touchEventViewArray[0].movementDirectionPoint = nearestTouchModelToFirst.targetPoint!
+            
+            
+            if self.touchEventViewArray[1].isHidden == false {
+                self.touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
+                    return modelA.distanceToSecondBall < modelB.distanceToSecondBall
+                }
+                
+                let nearestTouchModelToSecond = self.touchEventDistanceModelArray.first!
+                self.touchEventViewArray[1].movementDirectionPoint = nearestTouchModelToSecond.targetPoint!
+            }
+            
+            self.touchEventDistanceModelArray.removeAll()
+            self.recognizedPointArray = []
+            
+        }
+    }
     
 }

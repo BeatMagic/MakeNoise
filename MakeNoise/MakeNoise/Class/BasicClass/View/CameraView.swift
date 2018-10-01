@@ -266,8 +266,7 @@ extension CameraView {
 // MARK: - 各种代理
 extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
     
-    
-    
+
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         
@@ -883,24 +882,5 @@ extension CameraView {
     
 }
 
-
-
-//extension CameraView: AVCaptureFileOutputRecordingDelegate {
-//
-//    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-//        var success = true
-//
-//        if error != nil {// sometimes there may be error but the video is caputed successfully
-//            success = (error as! CustomNSError).errorUserInfo[AVErrorRecordingSuccessfullyFinishedKey] as! Bool
-//
-//        }
-//
-//        if (success) {
-//
-//        }
-//    }
-//
-//
-//}
 
 

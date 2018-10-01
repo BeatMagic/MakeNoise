@@ -50,6 +50,7 @@
 		7CD229BA215C76F00029F4CC /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229B9215C76F00029F4CC /* CameraView.swift */; };
 		7CD229BC215C777A0029F4CC /* CameraAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229BB215C777A0029F4CC /* CameraAttributes.swift */; };
 		7CD229C0215C79A40029F4CC /* DealWithCameraAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CD229BF215C79A40029F4CC /* DealWithCameraAttributes.swift */; };
+		7CF55F3D216213BC0006B107 /* TouchEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF55F3C216213BC0006B107 /* TouchEventViewModel.swift */; };
 		8B8C977CAE243D5B39B6D414 /* Pods_MakeNoise.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8558B08243A85E41D4A1F016 /* Pods_MakeNoise.framework */; };
 /* End PBXBuildFile section */
 
@@ -103,6 +104,7 @@
 		7CD229B9215C76F00029F4CC /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		7CD229BB215C777A0029F4CC /* CameraAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAttributes.swift; sourceTree = "<group>"; };
 		7CD229BF215C79A40029F4CC /* DealWithCameraAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DealWithCameraAttributes.swift; sourceTree = "<group>"; };
+		7CF55F3C216213BC0006B107 /* TouchEventViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchEventViewModel.swift; sourceTree = "<group>"; };
 		8558B08243A85E41D4A1F016 /* Pods_MakeNoise.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MakeNoise.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8551CFEDD522D1C502CD133 /* Pods-MakeNoise.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.release.xcconfig"; path = "Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise.release.xcconfig"; sourceTree = "<group>"; };
 		EC3EF839070F3D485EC4526D /* Pods-MakeNoise.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MakeNoise.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise.debug.xcconfig"; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				7CC0C2522160C4EC005951CA /* KeyTouchEvent.swift */,
 				7CC0C2512160C4EC005951CA /* MusicAttributesModel.swift */,
 				7CC0C2542160C4EC005951CA /* MusicKeyAttributesModel.swift */,
+				7CF55F3C216213BC0006B107 /* TouchEventViewModel.swift */,
 				7CC0C2532160C4EC005951CA /* Timbres.swift */,
 			);
 			path = Model;
@@ -449,7 +452,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh",
 				"${PODS_ROOT}/AudioKit/iOS/AudioKitUI.framework",
 				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/HGRippleRadarView/HGRippleRadarView.framework",
@@ -470,7 +473,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MakeNoise/Pods-MakeNoise-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -507,6 +510,7 @@
 				7CC0C2392160C038005951CA /* PlayVideoViewController.swift in Sources */,
 				7CC0C26B2160C50D005951CA /* OperateKeysView.swift in Sources */,
 				5C957F2A2161C6EB005B498C /* MobileOpenPose.mlmodel in Sources */,
+				7CF55F3D216213BC0006B107 /* TouchEventViewModel.swift in Sources */,
 				7CD229B6215C740A0029F4CC /* BasicKnowledge.swift in Sources */,
 				7CC0C2552160C4EC005951CA /* MusicAttributesModel.swift in Sources */,
 			);
@@ -658,7 +662,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B8LQ5JPNA3;
+				DEVELOPMENT_TEAM = L9ZC5Q2DDV;
 				INFOPLIST_FILE = MakeNoise/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -683,7 +687,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = B8LQ5JPNA3;
+				DEVELOPMENT_TEAM = L9ZC5Q2DDV;
 				INFOPLIST_FILE = MakeNoise/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
