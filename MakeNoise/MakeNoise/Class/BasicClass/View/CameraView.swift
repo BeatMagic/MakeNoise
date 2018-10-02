@@ -32,7 +32,7 @@ class CameraView: UIView {
     }()
     
     var imageView: UIImageView = UIImageView.init(
-        frame: CGRect.init(x: 0, y: 0, width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight())
+        frame: CGRect.init(x: 0, y: 0, width: 200, height: 200)//width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight())
     )
     
     /// 画质 (中)
@@ -318,6 +318,34 @@ extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAud
         }
         
         
+        let opencv = OpenCVWrapper()
+        
+        
+        let dict = opencv.skinDetect(UIImage(ciImage: ciImage).generateCGImage())
+        
+        let resultImage = dict!["resultImage"] as! UIImage
+        let resultCGPointVauleArray = dict!["resultCGPointVauleArray"] as! NSArray
+        var pointArray: [CGPoint] = []
+        
+        
+        for pointVaule in resultCGPointVauleArray {
+            var point = CGPoint.init(x: 0, y: 0)
+            point = (pointVaule as! NSValue).cgPointValue
+            point = CGPoint(x: point.x/288*ToolClass.getScreenWidth(), y: point.y/352*ToolClass.getScreenWidth())
+            pointArray.append(point)
+            
+        }
+        print(pointArray)
+        if pointArray.count != 0 {
+            //            self.musicKeyboard.Signage = false
+            self.musicKeyboard.didSetRecognizedPointArray(pointArray)
+            
+        }
+        
+        DispatchQueue.main.async {
+            //self.imageView.image = resultImage.resize(to: CGSize(width: 200,height:200))
+        }
+        return
         
         guard let pixelBuffer = UIImage(ciImage: ciImage).resize(to: CGSize(width: ImageWidth,height: ImageHeight)).pixelBuffer() else { return }
         
@@ -871,6 +899,17 @@ extension UIImage {
         
         return resultPixelBuffer
     }
+    
+    func generateCGImage() -> UIImage{
+        
+        let ciImage = self.ciImage
+        let ciContext = CIContext.init()
+        let cgImage:CGImage = ciContext.createCGImage(ciImage!, from: ciImage!.extent)!
+        let uiImage = UIImage.init(cgImage: cgImage)
+        return uiImage
+    }
+
+    
 }
 
 extension CameraView {

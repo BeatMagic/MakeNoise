@@ -23,5 +23,8 @@
                        pos:(CGPoint*) pos
 ;
 
+-(NSMutableDictionary*) skinDetect:(UIImage*) oImage
+;
+
 @end
 

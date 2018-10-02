@@ -29,6 +29,8 @@ using namespace std;
 
 #define PI 3.14159265
 
+
+
 @implementation OpenCVWrapper
 
 -(void) matrixMin: (double *) data
@@ -169,6 +171,98 @@ using namespace std;
     
     return preview;
 }
+
+-(NSMutableDictionary*) skinDetect:(UIImage*) oImage
+{
+    NSMutableDictionary *resultDict = [[NSMutableDictionary alloc] init];
+    
+    CGFloat cols = CGImageGetWidth(oImage.CGImage), rows = CGImageGetHeight(oImage.CGImage);
+
+    
+    cv::Mat mat;
+    UIImageToMat(oImage, mat);
+    
+
+    Mat skinCrCbHist = Mat::zeros(cv::Size(256, 256), CV_8UC1);
+
+    ellipse(skinCrCbHist, cv::Point(113, 155.6), cv::Size(23.4, 15.2), 43.0, 0.0, 360.0, cv::Scalar(255, 255, 255), -1);
+
+    Mat ycrcb_image;
+    Mat output_mask = Mat::zeros(rows,cols, CV_8UC1);
+    cvtColor(mat, ycrcb_image, CV_RGB2YCrCb); //首先转换成到YCrCb空间
+
+    for (int i = 0; i < cols; i++)   //利用椭圆皮肤模型进行皮肤检测
+        for (int j = 0; j < rows; j++)
+        {
+            Vec3b ycrcb = ycrcb_image.at<Vec3b>(j, i);
+            if (skinCrCbHist.at<uchar>(ycrcb[1], ycrcb[2]) > 0)   //如果该落在皮肤模型椭圆区域内，该点就是皮肤像素点
+                output_mask.at<uchar>(j, i) = 255;
+        }
+
+    vector<vector<cv::Point>> contours;
+    vector<Vec4i> hierarcy;
+    
+    findContours(output_mask, contours, hierarcy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    
+  
+    vector<CGPoint> pts;
+    Point2f center;  //定义圆中心坐标
+    float radius;  //定义圆半径
+    
+    NSMutableArray<NSValue *> *muArray = [NSMutableArray array];
+    for (int i = 0; i<contours.size(); i++)  //依次遍历每个轮廓
+    {
+        float area = contourArea(contours[i]);
+        if (area > 200)
+        {
+            minEnclosingCircle(Mat(contours[i]), center, radius);
+            NSValue *pointVaule = [NSValue valueWithCGPoint:CGPointMake(center.x,center.y)];
+            [muArray addObject:pointVaule];
+            
+            //drawContours(mat, contours, i, Scalar(0, 0, 255), 2, 8);
+            circle(mat, center, radius, Scalar(0, 255, 0), 2, 8);  //绘制第i个轮廓的最小外接圆
+        }
+    }
+    
+    [resultDict setObject:muArray forKey:@"resultCGPointVauleArray"];
+    
+    UIImage *preview = MatToUIImage(mat);
+    mat.release();
+    skinCrCbHist.release();
+    ycrcb_image.release();
+    output_mask.release();
+    
+    [resultDict setObject:preview forKey:@"resultImage"];
+    
+    return resultDict;
+    
+    
+    
+//    Mat ycrcb_image;
+//    int Cr = 1;
+//    int Cb = 2;
+//    cvtColor(mat, ycrcb_image, CV_RGB2YCrCb); //首先转换成到YCrCb空间
+//    Mat output_mask = Mat::zeros(mat.size(), CV_8UC1);
+//    for (int i = 0; i < mat.rows; i++)
+//    {
+//        for (int j = 0; j < mat.cols; j++)
+//        {
+//            uchar *p_mask = output_mask.ptr<uchar>(i, j);
+//            uchar *p_src = ycrcb_image.ptr<uchar>(i, j);
+//            if (p_src[Cr] >= 133 && p_src[Cr] <= 173 && p_src[Cb] >= 77 && p_src[Cb] <= 127)
+//            {
+//                p_mask[0] = 255;
+//            }
+//        }
+//    }
+//
+//    UIImage *preview = MatToUIImage(output_mask);
+//    mat.release();
+//    ycrcb_image.release();
+//    output_mask.release();
+
+}
+
 
 @end
 
