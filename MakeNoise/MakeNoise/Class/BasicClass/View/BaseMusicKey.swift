@@ -42,14 +42,8 @@ class BaseMusicKey: UIView {
         didSet {
             var eventType = KeyTouchEvent.TouchEventType.Exit
             if pressStatus == .Pressed {
-                
-                let color = self.backgroundColor
-                self.backgroundColor = UIColor.flatWhite
-                
-                self.shake()
-                
                 eventType = KeyTouchEvent.TouchEventType.Enter
-                self.backgroundColor = color
+                
                 
             }else if pressStatus == .Unpressed && self.kind == MusicKeyAttributesModel.KeyKinds.Movable {
                 
@@ -149,6 +143,20 @@ extension BaseMusicKey {
                     let mySampler = TimbreManager.getSampler(keyIndex: self.mainKey)
                     try! mySampler.play(noteNumber: playToneModel.pitch, velocity: 95, channel: 1)
                     
+                    
+                    
+                    DispatchQueue.main.async {
+                        
+                        let color = self.backgroundColor
+                        self.backgroundColor = UIColor.flatWhite
+                        
+                        self.shake()
+                        
+                        DelayTask.createTaskWith(workItem: {
+                             self.backgroundColor = color
+                        }, delayTime: 0.1)
+                    }
+                    
                 }
             }
 
@@ -158,6 +166,6 @@ extension BaseMusicKey {
     func stopNoise() -> Void {
         let mySampler = TimbreManager.getSampler(keyIndex: self.mainKey)
         try! mySampler.stop(noteNumber: self.lastPressedNote, channel: 1)
-        
+
     }
 }
