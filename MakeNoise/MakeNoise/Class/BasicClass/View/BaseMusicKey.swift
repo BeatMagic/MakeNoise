@@ -45,11 +45,12 @@ class BaseMusicKey: UIView {
                 eventType = KeyTouchEvent.TouchEventType.Enter
                 
                 
-            }else if pressStatus == .Unpressed && self.kind == MusicKeyAttributesModel.KeyKinds.Movable {
-                
-                //抬起事件除了要添加事件处理，还要自己在内部处理停止发声逻辑
-                self.stopNoise()
             }
+//            else if pressStatus == .Unpressed && self.kind == MusicKeyAttributesModel.KeyKinds.Movable {
+//                
+//                //抬起事件除了要添加事件处理，还要自己在内部处理停止发声逻辑
+//                self.stopNoise()
+//            }
             
             let ktevent = KeyTouchEvent(id:mainKey,ctime:Date().timeIntervalSince1970,type:eventType)
             EventQueueManager.AddEvent(groupId: mainKey, event: ktevent)

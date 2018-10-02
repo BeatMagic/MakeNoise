@@ -33,8 +33,6 @@ class OperateKeysView: UIView {
                     x: ToolClass.getScreenWidth() / 2 - 15, y: ToolClass.getScreenHeight() / 2 - 15,
                     width: 30, height: 30)
             )
-            touchEventView.isHidden = true
-            
             tmpArray.append(touchEventView)
             
         }
@@ -81,7 +79,6 @@ extension OperateKeysView {
             MusicKeyViewModel.init(tmpRect, .BorderVariable),
             
             MusicKeyViewModel.init(tmpRect, .Movable),
-            
         ]
         
         
@@ -154,15 +151,15 @@ extension OperateKeysView {
                     )
                     
                 }
-            
-            
+                
+                
             // 可拖动
             case 11:
                 viewModel.ownFrame = CGRect.init(
-                    x: startX * 2.5,
+                    x: (ToolClass.getScreenWidth() - normalHeight / 5 * 8) / 2,
                     y: recordY + normalHeight / 2,
-                    width: normalHeight / 5 * 4,
-                    height: normalHeight / 5 * 4
+                    width: normalHeight / 5 * 8,
+                    height: normalHeight / 5 * 8
                 )
                 
                 
@@ -297,13 +294,13 @@ extension OperateKeysView {
         
         
         
-//        if self.presentTouchArray.count == 1 {
-//            self.touchStatus = 1
-//
-//        }else {
-//            self.touchStatus = 2
-//
-//        }
+        //        if self.presentTouchArray.count == 1 {
+        //            self.touchStatus = 1
+        //
+        //        }else {
+        //            self.touchStatus = 2
+        //
+        //        }
         
         
         switch self.presentTouchArray.count {
@@ -618,7 +615,7 @@ extension OperateKeysView: TouchEventViewDelegate {
             
             if isPassed == true && musicKey.frame.contains(oldPoint) == false {
                 musicKey.pressStatus = .Pressed
-
+                
             }
             
         }
@@ -631,12 +628,12 @@ extension OperateKeysView: TouchEventViewDelegate {
 extension OperateKeysView {
     func didSetRecognizedPointArray(_ recognizedPointArray: [CGPoint?]) -> Void {
         
-//        DispatchQueue.main.async {
-//            self.isUserInteractionEnabled = false
-//        }
+        //        DispatchQueue.main.async {
+        //            self.isUserInteractionEnabled = false
+        //        }
         
         var tmpPointArray: [CGPoint?] = recognizedPointArray
-
+        
         if tmpPointArray.count > 17 {
             
             for _ in 17 ..< tmpPointArray.count {
@@ -650,188 +647,13 @@ extension OperateKeysView {
             DispatchQueue.main.async {
                 
                 if let point = recognizedPointArray[index] {
-                    
-                    self.touchEventViewArray[index].isHidden = false
                     self.touchEventViewArray[index].movementDirectionPoint = point
                     
-                }else {
-                    self.touchEventViewArray[index].isHidden = true
-
                 }
-                
-                //self.touchEventViewArray[index].isHidden = true
                 
                 
             }
         }
-        
-        
-            
-
-        
-//        var recordLeftHandPoint: CGPoint? = nil
-//        var recordRightHandPoint: CGPoint? = nil
-//
-//        if let leftHandPoint = recognizedPointArray[0]{
-//            DispatchQueue.main.async {
-//                self.touchEventViewArray[0].movementDirectionPoint = leftHandPoint
-//
-//            }
-//
-//            recordLeftHandPoint = leftHandPoint
-//
-//        }else {
-//            if self.prevRecognizedPointArray[0] == nil {
-//                recordLeftHandPoint = nil
-//
-//            }else {
-//                let tmpPoint = CGPoint.init(
-//                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
-//                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
-//                )
-//
-//                self.touchEventViewArray[0].movementDirectionPoint = tmpPoint
-//
-//                recordLeftHandPoint = tmpPoint
-//            }
-//
-//        }
-//
-//        if let rightHandPoint = recognizedPointArray[1]{
-//            DispatchQueue.main.async {
-//                self.touchEventViewArray[1].movementDirectionPoint = rightHandPoint
-//
-//            }
-//
-//            recordRightHandPoint = rightHandPoint
-//
-//        }else {
-//            if self.prevRecognizedPointArray[1] == nil {
-//                recordRightHandPoint = nil
-//
-//            }else {
-//                let tmpPoint = CGPoint.init(
-//                    x: CGFloat.random(in: 20 ..< ToolClass.getScreenWidth() - 20),
-//                    y: CGFloat.random(in: 20 ..< ToolClass.getScreenHeight() - 20)
-//                )
-//
-//                self.touchEventViewArray[1].movementDirectionPoint = tmpPoint
-//
-//                recordRightHandPoint = tmpPoint
-//            }
-//
-//        }
-//
-//        self.prevRecognizedPointArray = [recordLeftHandPoint, recordRightHandPoint]
-        
-        
-        
-//        switch recognizedPointArray.count {
-//        case 1:
-//            let point = recognizedPointArray.first!
-//
-//            DispatchQueue.main.async {
-//                if self.touchEventViewArray[1].isHidden == true { // 屏幕上只有一个点直接吸附
-//                    let touchEventView = self.touchEventViewArray[0]
-//                    touchEventView.movementDirectionPoint = point
-//
-//                }else { // 屏幕上有两个点 选择其中最近的吸附
-//                    var distanceArray: [CGFloat] = []
-//
-//                    for touchEventView in self.touchEventViewArray {
-//                        let touchEventViewToTouch = ToolClass.getDistance(point1: point, point2: touchEventView.center)
-//
-//                        distanceArray.append(touchEventViewToTouch)
-//                    }
-//
-//                    if distanceArray[0] < distanceArray[1] {
-//                        self.touchEventViewArray[0].movementDirectionPoint = point
-//
-//                    }else {
-//                        self.touchEventViewArray[1].movementDirectionPoint = point
-//
-//                    }
-//
-//                }
-//            }
-//
-//        default:
-//            for point in recognizedPointArray {
-//                DispatchQueue.main.async {
-//                    let distanceToFirst = ToolClass.getDistance(
-//                        point1: self.touchEventViewArray[0].center,
-//                        point2: point
-//                    )
-//
-//                    let distanceToSecond = ToolClass.getDistance(
-//                        point1: self.touchEventViewArray[1].center,
-//                        point2: point
-//                    )
-//
-//                    let touchEventDistanceModel = TouchEventRecordDistance.init(
-//                        targetTouch: nil, targetPoint: point,
-//                        distanceToFirstBall: distanceToFirst,
-//                        distanceToSecondBall: distanceToSecond
-//                    )
-//
-//                    touchEventDistanceModelArray.append(touchEventDistanceModel)
-//                }
-//            }
-//
-//            if touchEventDistanceModelArray.count == 0 {
-//
-//                self.Signage = true
-//
-//                return
-//
-//            }
-//
-//            print(touchEventDistanceModelArray.count)
-//
-//            let queueGroupA = DispatchGroup.init()
-//            let queueA = DispatchQueue.init(label: "tmpAQueue")
-//
-//            queueA.async(group: queueGroupA, execute: {
-//                touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
-//                    return modelA.distanceToFirstBall < modelB.distanceToFirstBall
-//                }
-//            })
-//
-//            queueGroupA.notify(queue: DispatchQueue.main) {
-//                let nearestTouchModelToFirst = touchEventDistanceModelArray[0]
-//
-//                self.touchEventViewArray[0].movementDirectionPoint = nearestTouchModelToFirst.targetPoint!
-//            }
-//
-//            DispatchQueue.main.async {
-//                if self.touchEventViewArray[1].isHidden == false {
-//
-//                    let queueGroupB = DispatchGroup.init()
-//                    let queueB = DispatchQueue.init(label: "tmpBQueue")
-//                    queueB.async(group: queueGroupB, execute: {
-//
-//                        touchEventDistanceModelArray.sort { (modelA, modelB) -> Bool in
-//                            return modelA.distanceToSecondBall < modelB.distanceToSecondBall
-//                        }
-//                    })
-//
-//                    if touchEventDistanceModelArray.count == 0 {
-//                        return
-//                    }
-//
-//                    queueGroupB.notify(queue: DispatchQueue.main) {
-//                        let nearestTouchModelToSecond = touchEventDistanceModelArray[0]
-//                        self.touchEventViewArray[1].movementDirectionPoint = nearestTouchModelToSecond.targetPoint!
-//                    }
-//
-//
-//                }
-//            }
-//
-//        }
-//
-////        objc_sync_exit(self.touchEventViewArray)
-//        self.Signage = true
     }
     
 }

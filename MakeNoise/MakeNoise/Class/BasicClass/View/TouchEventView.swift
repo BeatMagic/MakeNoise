@@ -21,7 +21,10 @@ class TouchEventView: UIView {
                     // 得到需要运动的距离
                     let needTravelDistance = ToolClass.getDistance(point1: self.center, point2: self.movementDirectionPoint)
                     
-                    self.bindingAnimation(duration: Double.init(needTravelDistance / TouchEventViewSettingModel.unitSpeed))
+                    self.isHidden = false
+                    self.bindingAnimation(duration: Double.init(needTravelDistance / TouchEventViewSettingModel.unitSpeed), completion: {
+                        self.isHidden = true
+                    })
                     
                 }
             }
@@ -40,6 +43,7 @@ class TouchEventView: UIView {
         self.backgroundColor = UIColor.flatWhite
         self.layer.cornerRadius = 15
         self.layer.masksToBounds = true
+        self.isHidden = true
         
         self.addObserver(self, forKeyPath: "center", options: [.new, .old ], context: &touchEventViewContext)
         
@@ -53,8 +57,8 @@ class TouchEventView: UIView {
         self.removeObserver(self, forKeyPath: "center", context: &touchEventViewContext)
         
     }
-
-
+    
+    
 }
 
 extension TouchEventView {
@@ -66,7 +70,7 @@ extension TouchEventView {
                 let change = change,
                 let newValue = change[.newKey] as? CGPoint,
                 let oldValue = change[.oldKey] as? CGPoint else {
-
+                    
                     return
             }
             
@@ -74,42 +78,19 @@ extension TouchEventView {
                 self.delegate?.doWithDetermineTrack(oldPoint: oldValue, newPoint: newValue)
                 
             }
-
+            
         }else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             
         }
         
     }
-
+    
 }
 
 extension TouchEventView {
-    /// 获得一个设置好的直线动画
-    func getPanAnimationArray(_ duration: CFTimeInterval) -> [CABasicAnimation] {
-        let xPanAnimation = ToolClass.baseAnimationWithKeyPath(
-            "transform.translation.x",
-            fromValue: self.frame.origin.x,
-            toValue: self.movementDirectionPoint.x,
-            duration: duration,
-            repeatCount: 0,
-            timingFunction: CAMediaTimingFunctionName.easeOut.rawValue
-        )
-        
-        let yPanAnimation = ToolClass.baseAnimationWithKeyPath(
-            "transform.translation.y",
-            fromValue: self.frame.origin.y,
-            toValue: self.movementDirectionPoint.y,
-            duration: duration,
-            repeatCount: 0,
-            timingFunction: CAMediaTimingFunctionName.easeOut.rawValue
-        )
-        
-        return [xPanAnimation, yPanAnimation]
-    }
-    
     /// 绑定动画
-    func bindingAnimation(duration: TimeInterval) -> Void {
+    func bindingAnimation(duration: TimeInterval, completion: @escaping (() -> Void)) -> Void {
         
         UIView.animate(
             withDuration: duration,
@@ -117,11 +98,13 @@ extension TouchEventView {
             options: [],
             animations: {
                 self.center = self.movementDirectionPoint
-            },
-            completion: nil
+        },
+            completion: { (isFinished) in
+                if isFinished == true {
+                    completion()
+                }
+        }
         )
-
-        
         
     }// funcEnd
     
