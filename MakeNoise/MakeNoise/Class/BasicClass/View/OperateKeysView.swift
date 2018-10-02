@@ -659,7 +659,7 @@ extension OperateKeysView {
 
                 }
                 
-                self.touchEventViewArray[index].isHidden = true
+                //self.touchEventViewArray[index].isHidden = true
                 
                 
             }

@@ -18,9 +18,16 @@ class CameraView: UIView {
     /// 是否到本地 (保存)
     var isSaveTheFileToLibrary = true
     
+    static let useOpenCV = true
+    
     let model = MobileOpenPose()
     let ImageWidth = 368
     let ImageHeight = 368
+    
+    let scaleWidth = CameraView.getCameraImageWidth(preset: AVCaptureSession.Preset.cif352x288)
+    let baisWidth = (CameraView.getCameraImageWidth(preset: AVCaptureSession.Preset.cif352x288) - ToolClass.getScreenWidth())/2
+    
+    
     lazy var classificationRequest: [VNRequest] = {
         do {
             let model = try VNCoreMLModel(for: self.model.model)
@@ -32,7 +39,7 @@ class CameraView: UIView {
     }()
     
     var imageView: UIImageView = UIImageView.init(
-        frame: CGRect.init(x: 0, y: 0, width: 200, height: 200)//width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight())
+        frame: CGRect.init(x: 0, y: 0, width: ToolClass.getScreenWidth(), height: ToolClass.getScreenHeight())
     )
     
     /// 画质 (中)
@@ -317,36 +324,34 @@ extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAud
             ciImage = CIImage(cvImageBuffer: imageBuffer)
         }
         
-        
-        let opencv = OpenCVWrapper()
-        
-        
-        let dict = opencv.skinDetect(UIImage(ciImage: ciImage).generateCGImage())
-        
-        let resultImage = dict!["resultImage"] as! UIImage
-        let resultCGPointVauleArray = dict!["resultCGPointVauleArray"] as! NSArray
-        var pointArray: [CGPoint] = []
-        
-        
-        for pointVaule in resultCGPointVauleArray {
-            var point = CGPoint.init(x: 0, y: 0)
-            point = (pointVaule as! NSValue).cgPointValue
-            point = CGPoint(x: point.x/288*ToolClass.getScreenWidth(), y: point.y/352*ToolClass.getScreenWidth())
-            pointArray.append(point)
+        if CameraView.useOpenCV {
+            let opencv = OpenCVWrapper()
+            let dict = opencv.skinDetect(UIImage(ciImage: ciImage).generateCGImage())
+            let resultImage = dict!["resultImage"] as! UIImage
+            let resultCGPointVauleArray = dict!["resultCGPointVauleArray"] as! NSArray
+            var pointArray: [CGPoint] = []
+            for pointVaule in resultCGPointVauleArray {
+                var point = CGPoint.init(x: 0, y: 0)
+                point = (pointVaule as! NSValue).cgPointValue
+                point = CGPoint(x: point.x/288*scaleWidth - baisWidth, y: point.y/352*ToolClass.getScreenHeight())
+                pointArray.append(point)
+                
+            }
+            print(pointArray)
+            if pointArray.count != 0 {
+                //            self.musicKeyboard.Signage = false
+                self.musicKeyboard.didSetRecognizedPointArray(pointArray)
+                
+            }
             
+            DispatchQueue.main.async {
+                
+                self.imageView.image = resultImage.resize(to: CGSize.init(width: self.scaleWidth, height: ToolClass.getScreenHeight()))
+                self.imageView.contentMode = .center
+
+            }
+            return
         }
-        print(pointArray)
-        if pointArray.count != 0 {
-            //            self.musicKeyboard.Signage = false
-            self.musicKeyboard.didSetRecognizedPointArray(pointArray)
-            
-        }
-        
-        DispatchQueue.main.async {
-            //self.imageView.image = resultImage.resize(to: CGSize(width: 200,height:200))
-        }
-        return
-        
         guard let pixelBuffer = UIImage(ciImage: ciImage).resize(to: CGSize(width: ImageWidth,height: ImageHeight)).pixelBuffer() else { return }
         
         var requestOptions:[VNImageOption: Any] = [:]
@@ -749,34 +754,6 @@ extension CameraView {
 
     }
     
-    func setPos(_ mm: Array<Double>) {
-        let com = PoseEstimator(ImageWidth,ImageHeight)
-        
-        
-        let humans = com.estimate(mm);
-        
-        var pos = [CGPoint?]()
-        for human in humans {
-            for i in 0..<CocoPart.Background.rawValue {
-                if human.bodyParts.keys.index(of: i) == nil {
-                    pos.append(nil)
-                    continue
-                }
-                let bodyPart = human.bodyParts[i]!
-                //centers[i] = CGPoint(x: bodyPart.x, y: bodyPart.y)
-                let pt = CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5))
-                pos.append(pt)
-            }
-            
-        }
-        print(pos)
-        
-        if pos.count != 0 {
-            self.musicKeyboard.didSetRecognizedPointArray(pos)
-            
-        }
-        
-    }
 
     func drawLine(_ mm: Array<Double>) {
         let com = PoseEstimator(ImageWidth,ImageHeight)
@@ -799,7 +776,7 @@ extension CameraView {
                 //centers[i] = CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5))
                 
                 
-                posSet.append(CGPoint(x: Int(bodyPart.x * ToolClass.getScreenWidth() + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5)))
+                posSet.append(CGPoint(x: Int(bodyPart.x * scaleWidth - baisWidth + 0.5), y: Int(bodyPart.y * ToolClass.getScreenHeight() + 0.5)))
                 
             }
             
@@ -831,7 +808,8 @@ extension CameraView {
             let cv_size = CGRect(x: 0, y: 0, width: self.ImageWidth, height: self.ImageHeight)
             let uiImage = opencv.renderKeyPoint(cv_size, keypoint: &keypoint, keypoint_size: Int32(keypoint.count), pos: &pos)
             
-            self.imageView.image = uiImage?.resize(to: CGSize(width: ToolClass.getScreenWidth(),height:ToolClass.getScreenHeight()))
+            self.imageView.image = uiImage?.resize(to: CGSize(width: self.scaleWidth,height:ToolClass.getScreenHeight()))
+            self.imageView.contentMode = .center
         }
         
     }
@@ -939,6 +917,21 @@ extension CameraView {
             AVSampleRateKey: 22050 as AnyObject
         ]
     }
+    
+    static func getCameraImageWidth(preset: AVCaptureSession.Preset) -> CGFloat {
+        
+        switch preset {
+        case AVCaptureSession.Preset.cif352x288:
+            CameraAttributes.CameraImageWidth = ToolClass.getScreenHeight() / 352 * 288
+            
+        default:
+            CameraAttributes.CameraImageWidth = 0
+        }
+        
+        return CameraAttributes.CameraImageWidth
+        
+    }
+    
     
     
 }

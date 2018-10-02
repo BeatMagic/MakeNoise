@@ -60,4 +60,8 @@ class CameraAttributes: NSObject {
             }
         }
     }
+    
+    /// 相机截屏像素宽
+    static var CameraImageWidth: CGFloat = 0
+    
 }
