@@ -21,9 +21,9 @@ class TouchEventView: UIView {
                     // 得到需要运动的距离
                     let needTravelDistance = ToolClass.getDistance(point1: self.center, point2: self.movementDirectionPoint)
                     
-                    self.isHidden = false
+//                    self.isHidden = false
                     self.bindingAnimation(duration: Double.init(needTravelDistance / TouchEventViewSettingModel.unitSpeed), completion: {
-                        self.isHidden = true
+//                        self.isHidden = true
                     })
                     
                 }
