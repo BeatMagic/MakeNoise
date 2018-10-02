@@ -219,8 +219,8 @@ using namespace std;
             NSValue *pointVaule = [NSValue valueWithCGPoint:CGPointMake(center.x,center.y)];
             [muArray addObject:pointVaule];
             
-            //drawContours(mat, contours, i, Scalar(0, 0, 255), 2, 8);
-            circle(mat, center, radius, Scalar(0, 255, 0), 2, 8);  //绘制第i个轮廓的最小外接圆
+            drawContours(mat, contours, i, Scalar(255, 0, 0,180), 1, 8);
+            //circle(mat, center, radius, Scalar(255, 0, 0,180), 1, 8);  //绘制第i个轮廓的最小外接圆
         }
     }
     
