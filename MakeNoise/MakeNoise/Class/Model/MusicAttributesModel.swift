@@ -50,50 +50,54 @@ class MusicAttributesModel: NSObject {
     /// 音色文件名数组 [[音色文件名]] (按照按钮排列)
     static let toneFileWithKeyArray: [[[String]]] = [
         [
-            ["0st_01_C1.wav", "0st_02_B2.wav"],
+            ["0_01_D1.wav"],
             [],
         ],
         [
-            ["1st_01_A1.wav"],
+            ["1_01_E1.wav"],
             [],
         ],
         [
-            ["2st_01_D1.wav"],
+            ["2_01_F1.wav"],
             [],
         ],
         [
-            ["3st_01_E1.wav"],
+            ["3_01_G1.wav"],
             [],
         ],
         [
-            ["4st_01_F1.wav"],
+            ["4_01_B1.wav", "4_02_C2.wav", "4_03_G2.wav"],
             [],
         ],
         
         [
-            ["5st_01_G1.wav"],
+            ["5_01_C2.wav", "5_02_B1.wav"],
             [],
         ],
         [
-            ["6st_01_B1.wav", "6st_02_C2.wav", "6st_02_G2.wav"],
+            ["6_01_C1.wav", "6_02_B2.wav"],
             [],
         ],
         [
-            ["7st_01_C2.wav", "7st_02_B1.wav" ],
+            ["7_01_D2.wav", "7_02_G2.wav", "7_03_E2.wav" ],
             [],
         ],
         [
-            ["8st_01_D2.wav", "8st_02_G2.wav", "8st_03_E2.wav"],
+            ["8_01_E2.wav", "8_02_G2.wav"],
             [],
         ],
         [
-            ["9st_01_E2.wav", "9st_02_G2.wav"],
+            ["9_01_F2.wav", "9_02_A2.wav", "9_03_G2.wav"],
             [],
         ],
         [
-            ["10st_01_F2.wav", "10st_02_A2.wav", "10st_03_G2.wav"],
+            ["10_01_G2.wav", "10_02_A2.wav", "10_03_F2.wav"],
             [],
         ],
+        [
+            ["11_01_A1.wav"],
+            [],
+        ]
     ]
 
 }
