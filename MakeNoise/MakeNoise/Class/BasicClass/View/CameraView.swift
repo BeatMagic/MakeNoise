@@ -337,7 +337,7 @@ extension CameraView: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAud
                 pointArray.append(point)
                 
             }
-            print(pointArray)
+//            print(pointArray)
             if pointArray.count != 0 {
                 //            self.musicKeyboard.Signage = false
                 self.musicKeyboard.didSetRecognizedPointArray(pointArray)
@@ -793,7 +793,7 @@ extension CameraView {
                 }
             }
         }
-        print(posSet)
+//        print(posSet)
         
         if posSet.count != 0 {
 //            self.musicKeyboard.Signage = false

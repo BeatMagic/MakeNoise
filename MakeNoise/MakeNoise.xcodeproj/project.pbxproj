@@ -737,7 +737,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zwxbest.MakeNoise;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cyybest.MakeNoise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MakeNoise/Class/Openpose/MakeNoise-Bridging-Header.h";
@@ -762,7 +762,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zwxbest.MakeNoise;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cyybest.MakeNoise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MakeNoise/Class/Openpose/MakeNoise-Bridging-Header.h";

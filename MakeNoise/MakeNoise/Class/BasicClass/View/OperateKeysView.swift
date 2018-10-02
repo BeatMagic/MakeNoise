@@ -34,11 +34,13 @@ class OperateKeysView: UIView {
                     width: 30, height: 30)
             )
             tmpArray.append(touchEventView)
-            
+
         }
-        
+
         return tmpArray
     }()
+    
+    private var prevMusicKeyClickCountArray: [Int] = Array.init(repeating: 0, count: 12)
     
     /// 上次识别出来的点数组
     private var prevRecognizedPointArray: [CGPoint?] = [nil, nil]
@@ -609,6 +611,11 @@ extension OperateKeysView {
 extension OperateKeysView: TouchEventViewDelegate {
     func doWithDetermineTrack(oldPoint: CGPoint, newPoint: CGPoint) {
         
+        if oldPoint == CGPoint.init(x: ToolClass.getScreenWidth() / 2 - 15, y: ToolClass.getScreenHeight() / 2 - 15)  {
+            
+            return
+        }
+        
         for musicKey in self.musicKeyArray {
             
             let isPassed = ToolClass.judgeTwoPointsSegmentIsPassView(point1: oldPoint, point2: newPoint, view: musicKey)
@@ -642,18 +649,59 @@ extension OperateKeysView {
             
         }
         
+        var musicKeyClickCountArray = Array.init(repeating: 0, count: self.musicKeyArray.count)
+        
         for index in 0 ..< tmpPointArray.count {
             
-            DispatchQueue.main.async {
+            if let point = tmpPointArray[index] {
+//                self.touchEventViewArray[index].movementDirectionPoint = point
                 
-                if let point = recognizedPointArray[index] {
-                    self.touchEventViewArray[index].movementDirectionPoint = point
-                    
+                for musicKeyIndex in 0 ..< self.musicKeyArray.count {
+                    let musicKey = self.musicKeyArray[musicKeyIndex]
+                    DispatchQueue.main.async {
+                        if musicKey.frame.contains(point){
+                            musicKeyClickCountArray[musicKeyIndex] += 1
+                            
+                        }
+                    }
                 }
                 
+            }
+
+        }
+        
+        
+        
+        for index in 0 ..< musicKeyClickCountArray.count {
+            if musicKeyClickCountArray[index] > self.prevMusicKeyClickCountArray[index] {
+//                print("+++++++")
+//                print(self.prevMusicKeyClickCountArray[index])
+//                print(musicKeyClickCountArray[index])
+                
+                self.musicKeyArray[index].pressStatus = .Pressed
                 
             }
+            
+            print("index\(index) 个数\(musicKeyClickCountArray[index])")
+            self.prevMusicKeyClickCountArray[index] = musicKeyClickCountArray[index]
         }
+        
+        
+        
+        
+        //            DispatchQueue.main.async {
+        //
+        //                if let point = recognizedPointArray[index] {
+        //                    self.touchEventViewArray[index].movementDirectionPoint = point
+        //
+        //                    for musicKey in self.musicKeyArray {
+        //                        if musicKey.frame.contains(point){
+        //
+        //
+        //                        }
+        //                    }
+        //                }
+        //            }
     }
     
 }

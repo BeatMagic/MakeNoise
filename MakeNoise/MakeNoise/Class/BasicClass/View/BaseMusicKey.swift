@@ -8,6 +8,8 @@
 
 import UIKit
 
+private var clickCounterContext = 0
+
 class BaseMusicKey: UIView {
     /// 主键
     let mainKey: Int!
@@ -47,7 +49,7 @@ class BaseMusicKey: UIView {
                 
             }
 //            else if pressStatus == .Unpressed && self.kind == MusicKeyAttributesModel.KeyKinds.Movable {
-//                
+//
 //                //抬起事件除了要添加事件处理，还要自己在内部处理停止发声逻辑
 //                self.stopNoise()
 //            }
@@ -58,6 +60,7 @@ class BaseMusicKey: UIView {
             
         }
     }
+
     
     
     init(frame: CGRect,
@@ -75,14 +78,13 @@ class BaseMusicKey: UIView {
         
         self.setData()
         self.setUI()
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 
-    
 }
 
 // MARK: - 设置自身属性
@@ -149,7 +151,7 @@ extension BaseMusicKey {
                     DispatchQueue.main.async {
                         
                         let color = self.backgroundColor
-                        self.backgroundColor = UIColor.flatWhite
+                        self.backgroundColor = UIColor.init(red: 232, green: 236, blue: 238, alpha: 0.001)
                         
                         self.shake()
                         

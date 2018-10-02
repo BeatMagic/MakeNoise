@@ -141,14 +141,14 @@ class PoseEstimator {
         let heatMat = Matrix<Double>(rows: 19, columns: heatRows*heatColumns, elements: data )
         
         let timeElapsed4 = CFAbsoluteTimeGetCurrent() - startTime4
-        print("init elapsed for \(timeElapsed4) seconds")
+//        print("init elapsed for \(timeElapsed4) seconds")
         
         let startTime3 = CFAbsoluteTimeGetCurrent()
         
         // print(sum(heatMat.elements)) // 810.501374994155
         var _nmsThreshold = max(mean(data) * 4.0, nmsThreshold)
         _nmsThreshold = min(_nmsThreshold, 0.3)
-        print(_nmsThreshold) // 0.0806388792154168
+//        print(_nmsThreshold) // 0.0806388792154168
         
         let coords : [[(Int,Int)]] = (0..<heatMat.rows-1).map { i in
             var nms = Array<Double>(heatMat.row(i))
@@ -175,7 +175,7 @@ class PoseEstimator {
         }
         
         let timeElapsed3 = CFAbsoluteTimeGetCurrent() - startTime3
-        print("others elapsed for \(timeElapsed3) seconds")
+//        print("others elapsed for \(timeElapsed3) seconds")
         
         let startTime = CFAbsoluteTimeGetCurrent()
         
@@ -203,7 +203,7 @@ class PoseEstimator {
         }
         
         let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
-        print("human_roop Time elapsed for roop: \(timeElapsed) seconds")
+//        print("human_roop Time elapsed for roop: \(timeElapsed) seconds")
         
         // reject by subset count
         humans = humans.filter{ $0.partCount() >= pafCountThreshold }
