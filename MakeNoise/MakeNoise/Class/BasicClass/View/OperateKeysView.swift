@@ -68,95 +68,106 @@ extension OperateKeysView {
         let tmpRect = CGRect.init(x: 40, y: 40, width: 40, height: 40)
         self.musicKeyViewModelArray = [
             MusicKeyViewModel.init(tmpRect, .Normal),
+            MusicKeyViewModel.init(tmpRect, .Normal),
+            MusicKeyViewModel.init(tmpRect, .Normal),
+            MusicKeyViewModel.init(tmpRect, .Normal),
+            MusicKeyViewModel.init(tmpRect, .Normal),
+            MusicKeyViewModel.init(tmpRect, .Normal),
+            MusicKeyViewModel.init(tmpRect, .Normal),
+            
+            MusicKeyViewModel.init(tmpRect, .BorderVariable),
+            MusicKeyViewModel.init(tmpRect, .BorderVariable),
+            MusicKeyViewModel.init(tmpRect, .BorderVariable),
+            MusicKeyViewModel.init(tmpRect, .BorderVariable),
+            
             MusicKeyViewModel.init(tmpRect, .Movable),
-            MusicKeyViewModel.init(tmpRect, .BorderVariable),
-            MusicKeyViewModel.init(tmpRect, .BorderVariable),
-            MusicKeyViewModel.init(tmpRect, .Normal),
-            MusicKeyViewModel.init(tmpRect, .BorderVariable),
-            MusicKeyViewModel.init(tmpRect, .Normal),
-            MusicKeyViewModel.init(tmpRect, .BorderVariable),
-            MusicKeyViewModel.init(tmpRect, .Normal),
-            MusicKeyViewModel.init(tmpRect, .BorderVariable),
-            MusicKeyViewModel.init(tmpRect, .Normal),
+            
         ]
         
-        let generalWidth: CGFloat = 250
-        let generalX: CGFloat  = (ToolClass.getScreenWidth() - generalWidth) / 3 * 2
-        let generalHeight: CGFloat  = 30
-        let initialY: CGFloat  = 250
-        let marginTop: CGFloat = 10
         
+        let normalHeight: CGFloat = 40
+        let normalWidth: CGFloat = ToolClass.getScreenWidth() - normalHeight
+        let normalMargin: CGFloat = normalHeight / 2
+        
+        let startX: CGFloat = normalHeight / 2
+        let startY: CGFloat = ToolClass.getScreenHeight() / 5
+        var recordY: CGFloat = 0
         
         for index in 0 ..< self.musicKeyViewModelArray.count {
             let viewModel = self.musicKeyViewModelArray[index]
             
             switch index {
                 
-            // 唯一一个大的普通
-            case 0:
-                viewModel.ownFrame = CGRect.init(x: generalX / 2 ,
-                                                 y: generalX + 25,
-                                                 width: ToolClass.getScreenWidth() - generalX,
-                                                 height: 1 * generalX)
+            case 0, 1:
+                let typeOfWidth = (normalWidth - normalHeight) / 2
+                let typeOfHeight = normalHeight / 2 * 3
                 
-            // 唯一一个可拖动
-            case 1:
-                viewModel.ownFrame = CGRect.init(x: (ToolClass.getScreenWidth() - 50) / 2,
-                                                 y: generalX,
-                                                 width: 50,
-                                                 height: 50)
-                
-            // 两个边框可变
-            case 2, 3:
                 viewModel.ownFrame = CGRect.init(
-                    x: (ToolClass.getScreenWidth() - 100 * 2 - generalHeight) / 2,
-                    y: generalX + 70,
-                    width: 100,
-                    height: 50
+                    x: normalHeight / 2 + CGFloat.init(index) * (typeOfWidth + normalHeight),
+                    y: startY,
+                    width: typeOfWidth,
+                    height: typeOfHeight
                 )
                 
-                if index == 3 {
+            case 2, 3, 4, 5:
+                let presentY = startY + normalHeight / 2 * 3 + normalMargin * 3 / 2 + (CGFloat.init(index) - 2) * (normalMargin + normalHeight)
+                
+                viewModel.ownFrame = CGRect.init(
+                    x: startX,
+                    y: presentY,
+                    width: normalWidth, height: normalHeight
+                )
+                
+                recordY = presentY
+                
+            case 6:
+                recordY = recordY + (normalMargin + normalHeight)
+                viewModel.ownFrame = CGRect.init(
+                    x: startX,
+                    y: recordY,
+                    width: normalWidth,
+                    height: normalHeight * 3 / 2
+                )
+                
+                
+                
+            case 7, 8, 9, 10:
+                let typeOfX = startX * 2
+                let typeOfY = startY + normalHeight / 2
+                let typeOfHight = normalHeight * 2
+                let typeOfWidth = (normalWidth - normalHeight) / 2 - normalHeight
+                
+                if index == 7 || index == 8 {
                     viewModel.ownFrame = CGRect.init(
-                        x: (ToolClass.getScreenWidth() - 100 * 2 - generalHeight) / 2 + 100 + generalHeight,
-                        y: generalX + 70,
-                        width: 100,
-                        height: 50
+                        x: typeOfX + (CGFloat.init(index) - 7) * (normalHeight * 2.7 + typeOfHight),
+                        y: typeOfY,
+                        width: typeOfWidth,
+                        height: typeOfHight
                     )
+                    
+                }else {
+                    viewModel.ownFrame = CGRect.init(
+                        x: typeOfX + (CGFloat.init(index) - 9) * (normalHeight * 2.7 + typeOfHight),
+                        y: recordY - normalHeight,
+                        width: typeOfWidth,
+                        height: typeOfHight
+                    )
+                    
                 }
-                
-            // 右下角大的
-            case 8:
+            
+            
+            // 可拖动
+            case 11:
                 viewModel.ownFrame = CGRect.init(
-                    x: ToolClass.getScreenWidth() / 2 + generalHeight / 2,
-                    y: ToolClass.getScreenHeight() - 250,
-                    width: ToolClass.getScreenWidth() / 2 - generalHeight,
-                    height: 70
+                    x: startX * 2.5,
+                    y: recordY + normalHeight / 2,
+                    width: normalHeight / 5 * 4,
+                    height: normalHeight / 5 * 4
                 )
                 
-            case 9:
-                
-                viewModel.ownFrame = CGRect.init(
-                    x: ToolClass.getScreenWidth() / 2 + generalHeight / 2 + marginTop * 1.5,
-                    y: ToolClass.getScreenHeight() - 250 + marginTop * 1.5,
-                    width: ToolClass.getScreenWidth() / 2 - generalHeight - marginTop * 3,
-                    height: 70 - marginTop * 3
-                )
-                
-            // 左下角
-            case 10:
-                viewModel.ownFrame = CGRect.init(
-                    x: generalHeight / 2,
-                    y: ToolClass.getScreenHeight() - 250,
-                    width: ToolClass.getScreenWidth() / 2 - generalHeight,
-                    height: 70
-                )
                 
             default:
-                viewModel.ownFrame = CGRect.init(x: generalX,
-                                                 y: initialY + CGFloat((index - 4)) * (marginTop + generalHeight),
-                                                 width: generalWidth,
-                                                 height: generalHeight)
-                
+                print("走到这就是错")
             }
             
         }
@@ -177,8 +188,6 @@ extension OperateKeysView {
             var musicKey: BaseMusicKey
             let normalFileArray = MusicAttributesModel.toneFileWithKeyArray[viewModelIndex].first!
             var tomeModelArray: [ToneItemModel] = []
-            
-            
             
             for fileName in normalFileArray {
                 let model = ToneItemModel.init(toneFileName: fileName)
@@ -377,57 +386,7 @@ extension OperateKeysView {
             
             
         }
-        
-        
-        
-        
-        
     }
-    
-    
-    //        switch self.presentTouchArray.count {
-    //        case 1:
-    
-    //
-    //        default:
-    //
-    //
-    //        }
-    //    }
-    
-    //                if touchEventView.isHidden == false {
-    //
-    //                    let touchEventViewToTouch = ToolClass.getDistance(point1: touch.location(in: self), point2: touchEventView.frame.origin)
-    //
-    //                    if rootDistance > touchEventViewToTouch {
-    //                        rootDistance = touchEventViewToTouch
-    //
-    //                        touchEventView.touchAddress = touchAddress
-    //                        touchEventView.movementDirectionPoint = touch.location(in: self)
-    //                    }
-    //                }
-    
-    //            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
-    //
-    //            let isSameTouchAddress = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
-    //
-    //            if isSameTouchAddress != true {
-    //                let touchEventModel = MusicKeyTouchMessageModel.init(touchAddress: touchAddress, touchEventPoint: touch.location(in: self), lastTouchKey: pressedKey)
-    //
-    //                self.touchEventModelArray.append(touchEventModel)
-    //
-    //            }
-    //
-    //            // 如果点到按钮就触发通知
-    //            if pressedKey != nil {
-    //                pressedKey!.pressStatus = .Pressed
-    //
-    //                // 判断点击是否为上层按钮
-    //                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
-    //                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
-    //
-    //                }
-    //            }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
@@ -442,66 +401,6 @@ extension OperateKeysView {
                 }
                 
             }
-            
-            
-            
-            //            let previousPressedKey = self.lastTouchKeyDict[touchAddress]!
-            
-            // 上次点击的按钮
-            //            let previousPressedKey: BaseMusicKey? = self.getLastTouchKey(address: touchAddress)
-            //
-            //
-            //
-            //            // 本次点击的按钮
-            //            let pressedKey = self.judgeTouchMusicKey(touch.location(in: self))
-            //
-            //
-            //            // 本次点击的按钮不为空
-            //            if pressedKey != nil {
-            //
-            //                // 判断点击是否为上层按钮
-            //                if let lowerLevelKeyIndex = self.judgeKeyIsHigherLevelKey(pressedKey!.mainKey) {
-            //                    self.musicKeyArray[lowerLevelKeyIndex].pressStatus = .Pressed
-            //
-            //                }
-            //
-            //
-            //                // 上次点击的按钮不为空
-            //                if previousPressedKey != nil {
-            //
-            //                    // 两次点击的按钮不一致
-            //                    if pressedKey!.mainKey != previousPressedKey!.mainKey {
-            //
-            //                        previousPressedKey!.pressStatus = .Unpressed
-            //
-            //
-            //                        // 判断是否从上层Key滑动到下层Key
-            //                        if self.judgeKeyIsMoved(fromHigherLevelKey: previousPressedKey!, toLowerLevelKey: pressedKey!) == false {
-            //
-            //                            pressedKey!.pressStatus = .Pressed
-            //                        }
-            //
-            //                    }
-            //
-            //                }else {
-            //                    pressedKey!.pressStatus = .Pressed
-            //
-            //                }
-            //
-            //
-            //
-            //            }else {
-            //                // 上次点击的按钮不为空
-            //                if previousPressedKey != nil {
-            //                    previousPressedKey!.pressStatus = .Unpressed
-            //
-            //                }
-            //            }
-            //
-            ////            self.lastTouchKeyDict[touchAddress]! = pressedKey
-            //
-            //            let _ = self.judgeTouchAddress(address: touchAddress, key: pressedKey)
-            
         }
     }
     
@@ -712,29 +611,17 @@ extension OperateKeysView {
 
 extension OperateKeysView: TouchEventViewDelegate {
     func doWithDetermineTrack(oldPoint: CGPoint, newPoint: CGPoint) {
+        
         for musicKey in self.musicKeyArray {
+            
             let isPassed = ToolClass.judgeTwoPointsSegmentIsPassView(point1: oldPoint, point2: newPoint, view: musicKey)
             
-            if isPassed == true {
+            if isPassed == true && musicKey.frame.contains(oldPoint) == false {
                 musicKey.pressStatus = .Pressed
-                
-//                if musicKey.kind == .Movable {
-//                    UIView.animate(
-//                        withDuration: 0.25,
-//                        delay: 0,
-//                        options: [],
-//                        animations: {
-//                            musicKey.center = newPoint
-//                    },
-//                        completion: nil
-//                    )
-//                    
-//                    
-//                }
+
             }
+            
         }
-        
-        
         
     }
     
@@ -744,24 +631,36 @@ extension OperateKeysView: TouchEventViewDelegate {
 extension OperateKeysView {
     func didSetRecognizedPointArray(_ recognizedPointArray: [CGPoint?]) -> Void {
         
-        DispatchQueue.main.async {
-            self.isUserInteractionEnabled = false
+//        DispatchQueue.main.async {
+//            self.isUserInteractionEnabled = false
+//        }
+        
+        var tmpPointArray: [CGPoint?] = recognizedPointArray
+
+        if tmpPointArray.count > 17 {
+            
+            for _ in 17 ..< tmpPointArray.count {
+                tmpPointArray.removeLast()
+            }
+            
         }
         
-        for index in 0 ..< 17 {
+        for index in 0 ..< tmpPointArray.count {
             
             DispatchQueue.main.async {
                 
                 if let point = recognizedPointArray[index] {
                     
-//                    self.touchEventViewArray[index].isHidden = false
+                    self.touchEventViewArray[index].isHidden = false
                     self.touchEventViewArray[index].movementDirectionPoint = point
                     
+                }else {
+                    self.touchEventViewArray[index].isHidden = true
+
                 }
-//                else {
-//                    self.touchEventViewArray[index].isHidden = true
-//
-//                }
+                
+                self.touchEventViewArray[index].isHidden = true
+                
                 
             }
         }
